@@ -293,7 +293,7 @@ shell.img: typechecker.img $(COMPILERMO) $(SHELLMO)
 
 TTY_LOADER = 'Shell.saveImage("tty.img", false);'
 
-tty.img: typechecker.img $(COMPILERMO) $(SHELLMO) $(INTERMO) $(TTYMO)
+tty.img: typechecker.img $(INTERPRETER_MLP_TARGETSMO) $(COMPILERMO) $(SHELLMO) $(INTERMO) $(TTYMO)
 	echo make: $@ from typechecker.img
 	$(SET_PERVASIVE)   ;    \
 	echo $(TTY_LOADER) |    \
@@ -307,7 +307,7 @@ TTYB_LOADER = 'Shell.Project.openProject "$(SRC)/basis.mlp"; \
                Shell.Project.loadAll () ; \
                Shell.saveImage("ttyb.img", false);'
 
-ttyb.img: typechecker.img $(COMPILERMO) $(SHELLMO) $(INTERMO) $(TTYMO) $(BASIS_AND_LOADERMO)
+ttyb.img: typechecker.img $(INTERPRETER_MLP_TARGETSMO) $(COMPILERMO) $(SHELLMO) $(INTERMO) $(TTYMO) $(BASIS_AND_LOADERMO)
 	echo make: $@ from typechecker.img
 	$(SET_PERVASIVE)      ;      \
 	echo $(TTYB_LOADER) |      \
@@ -322,7 +322,7 @@ tty2.img: shell.img $(INTERMO) $(TTYMO)
 
 GUI_LOADER = 'Shell.saveImage("gui.img", false);'
 
-gui.img: typechecker.img $(COMPILERMO) $(SHELLMO) $(INTERMO) $(XGUIMO)
+gui.img: typechecker.img $(XINTERPRETER_MLP_TARGETSMO) $(COMPILERMO) $(SHELLMO) $(INTERMO) $(XGUIMO)
 	echo make: $@ from typechecker.img
 	$(SET_PERVASIVE)     ;      \
 	echo $(GUI_LOADER) |      \
@@ -336,7 +336,7 @@ GUIB_LOADER = 'Shell.Project.openProject "$(SRC)/basis.mlp"; \
                Shell.Project.loadAll () ; \
                Shell.saveImage("guib.img", false);'
 
-guib.img: typechecker.img $(COMPILERMO) $(SHELLMO) $(INTERMO) $(XGUIMO) $(BASIS_AND_LOADERMO)
+guib.img: typechecker.img $(XINTERPRETER_MLP_TARGETSMO) $(COMPILERMO) $(SHELLMO) $(INTERMO) $(XGUIMO) $(BASIS_AND_LOADERMO)
 	echo make: $@ from typechecker.img
 	$(SET_PERVASIVE)      ;      \
 	echo $(GUIB_LOADER) |      \

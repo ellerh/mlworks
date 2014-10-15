@@ -374,8 +374,41 @@ FOREIGN = 	$(FOREIGN_EG) foreign/stub_gen.sml \
 		foreign/mlworks_dynamic_library.sml \
 		foreign/mlworks_c_io.sml
 
-all:
-	@echo Make all does nothing here
+default: help
+
+help:
+	@printf "\
+Main targets\n\
+all        -- build runtime, batch.img, ttyb.img and guib.img\n\
+bootstrap  -- create boot-batch.img with SML/NJ then same as all\n\
+clean      -- delete .mo files\n\
+help-vars  -- print info about variables\n\
+help       -- print this message\n\
+\n\
+Example: make ARCH=I386 OS=Linux all\n"
+
+help-vars:
+	@printf "\
+Main make variables:\n\
+OS        -- target operating system ($(OS))\n\
+ARCH      -- target architecture ($(ARCH))\n"
+
+all: check-sanity
+	$(MAKE) -C images/$(ARCH)/$(OS) batch.img
+	$(MAKE) -C images/$(ARCH)/$(OS) ttyb.img
+	$(MAKE) -C images/$(ARCH)/$(OS) guib.img
+
+bootstrap: check-sanity build-boot-batch.img all
+
+build-boot-batch.img: force
+	$(MAKE) --always-make -C images/$(ARCH)/$(OS) boot-batch.img
+
+check-sanity:
+	@[ "$(ARCH)" != "" ] || { echo "ERROR: ARCH not set"; exit 1; }
+	@[ "$(OS)" != "" ] || { echo "ERROR: OS not set"; exit 1; }
+
+clean: check-sanity
+	$(MAKE) -C images/$(ARCH)/$(OS) clean-mos
 
 check-out:
 	cd .. && $(COUTALL)
