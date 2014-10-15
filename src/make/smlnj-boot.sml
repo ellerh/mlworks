@@ -13,6 +13,8 @@ CM.make "$smlnj-tdp/back-trace.cm";
 SMLofNJ.Internals.TDP.mode := true;
 *)
 
+fun smlnj_exit () = OS.Process.exit OS.Process.success;
+
 use "make/nj_env.sml"; (* Simulate the runtime environment *)
 use "make/change_nj.sml";
 
@@ -30,3 +32,5 @@ Batch_.obey ["-verbose",
 	     "-configuration", "I386/Linux",
 	     "-target", "__batch.sml",
 	     "-build"];
+
+smlnj_exit ();
