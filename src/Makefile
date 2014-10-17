@@ -381,6 +381,7 @@ help:
 Main targets\n\
 all        -- build runtime, batch.img, ttyb.img and guib.img\n\
 bootstrap  -- create boot-batch.img with SML/NJ then same as all\n\
+check      -- run test suite (../test_suite/CHECK_RESULT_ALL.sh)\n\
 clean      -- delete .mo files\n\
 help-vars  -- print info about variables\n\
 help       -- print this message\n\
@@ -394,9 +395,7 @@ OS        -- target operating system ($(OS))\n\
 ARCH      -- target architecture ($(ARCH))\n"
 
 all: check-sanity
-	$(MAKE) -C images/$(ARCH)/$(OS) batch.img
-	$(MAKE) -C images/$(ARCH)/$(OS) ttyb.img
-	$(MAKE) -C images/$(ARCH)/$(OS) guib.img
+	$(MAKE) -C images/$(ARCH)/$(OS) batch.img ttyb.img guib.img
 
 bootstrap: check-sanity build-boot-batch.img all
 
@@ -409,6 +408,9 @@ check-sanity:
 
 clean: check-sanity
 	$(MAKE) -C images/$(ARCH)/$(OS) clean-mos
+
+check: check-sanity
+	cd ../test_suite && CHECK_RESULT_ALL.sh -src ../src -dir $(ARCH)/$(OS)
 
 check-out:
 	cd .. && $(COUTALL)
