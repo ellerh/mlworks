@@ -265,6 +265,8 @@ require "__vector";
 require "__array2";
 require "vector_slice";
 require "__vector_slice";
+require "array_slice";
+require "__array_slice";
 require "sml90";
 require "__sml90";
 require "command_line";
@@ -314,6 +316,7 @@ signature SUBSTRING=SUBSTRING
 signature TIMER=TIMER
 signature VECTOR=VECTOR
 signature VECTOR_SLICE=VECTOR_SLICE
+signature ARRAY_SLICE=ARRAY_SLICE
 signature BIN_IO=BIN_IO
 signature TEXT_IO=TEXT_IO
 signature TEXT_STREAM_IO=TEXT_STREAM_IO
@@ -365,6 +368,7 @@ structure Time=Time
 structure Timer=Timer
 structure Vector=Vector
 structure VectorSlice=VectorSlice
+structure ArraySlice=ArraySlice
 structure Word=Word
 structure Word8=Word8
 structure Word16=Word16
