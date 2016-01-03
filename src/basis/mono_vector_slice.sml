@@ -1,3 +1,8 @@
+(* mono_vector_slice.sml --- Basis Library MONO_VECTOR_SLICE structure
+ *
+ * This code has been placed in the public domain.
+ *)
+
 signature MONO_VECTOR_SLICE =
   sig
       type elem

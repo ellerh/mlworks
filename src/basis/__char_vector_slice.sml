@@ -1,3 +1,8 @@
+(* __char_vector_slice.sml --- Basis Library CharVectorSlice structure
+ *
+ * This code has been placed in the public domain.
+ *)
+
 require "mono_vector_slice";
 require "_vector_slice";
 require "__char_vector";
