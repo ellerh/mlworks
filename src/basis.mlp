@@ -1,9 +1,12 @@
 MLWorks 2.0
-basis.mlp 310 7
+basis.mlp 313 7
   AboutInfo 2 2
     Version 0 0
     Description 0 0
-  Files 147 0
+  Files 150 0
+    basis/_slice.sml
+    basis/_array_slice.sml
+    basis/_vector_slice.sml
     basis/bit_flags.sml
     basis/__bit_flags.sml
     basis/__array.sml

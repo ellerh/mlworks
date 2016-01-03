@@ -697,8 +697,11 @@ BASIS1 =	basis/__pre_basis \
 		basis/array2 \
 		basis/__array2 \
 		basis/vector_slice \
+		basis/_slice \
+		basis/_vector_slice \
 		basis/__vector_slice \
 		basis/array_slice \
+		basis/_array_slice \
 		basis/__array_slice \
 		basis/bool \
 		basis/__bool \
