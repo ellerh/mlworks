@@ -1,9 +1,12 @@
 MLWorks 2.0
-basis.mlp 316 7
+basis.mlp 319 7
   AboutInfo 2 2
     Version 0 0
     Description 0 0
-  Files 153 0
+  Files 156 0
+    basis/__char_array_slice.sml
+    basis/__word8_array_slice.sml
+    basis/mono_array_slice.sml
     basis/__char_vector_slice.sml
     basis/__word8_vector_slice.sml
     basis/mono_vector_slice.sml

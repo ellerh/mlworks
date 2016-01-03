@@ -687,16 +687,20 @@ BASIS1 =	basis/__pre_basis \
 		basis/mono_vector \
 		basis/mono_vector_slice \
 		basis/mono_array \
+		basis/mono_array_slice \
 		basis/string \
-		basis/__string \
-		basis/__char_vector \
 		basis/_slice \
 		basis/_vector_slice \
+		basis/_array_slice \
+		basis/__string \
+		basis/__char_vector \
 		basis/__char_vector_slice \
 		basis/__word8_vector \
 		basis/__word8_vector_slice \
 		basis/__word8_array \
+		basis/__word8_array_slice \
 		basis/__char_array \
+		basis/__char_array_slice \
 		basis/__array \
 		basis/__vector \
 		basis/array2 \
@@ -704,7 +708,6 @@ BASIS1 =	basis/__pre_basis \
 		basis/vector_slice \
 		basis/__vector_slice \
 		basis/array_slice \
-		basis/_array_slice \
 		basis/__array_slice \
 		basis/bool \
 		basis/__bool \

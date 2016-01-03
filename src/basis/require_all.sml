@@ -180,12 +180,14 @@ require "word";
 require "__word";
 require "__word8";
 require "mono_array";
+require "mono_array_slice";
 require "mono_array2";
 require "mono_vector";
 require "mono_vector_slice";
 require "__word8_vector";
 require "__word8_vector_slice";
 require "__word8_array";
+require "__word8_array_slice";
 require "__word8_array2";
 require "__real_vector";
 require "__real_array";
@@ -230,6 +232,7 @@ require "__bin_io";
 require "__char_vector";
 require "__char_vector_slice";
 require "__char_array";
+require "__char_array_slice";
 require "__int";
 require "__position";
 require "_prim_io";
@@ -294,6 +297,7 @@ signature STRING_CVT=STRING_CVT
 signature CHAR=CHAR
 signature WORD=WORD
 signature MONO_ARRAY=MONO_ARRAY
+signature MONO_ARRAY_SLICE=MONO_ARRAY_SLICE
 signature MONO_ARRAY2=MONO_ARRAY2
 signature MONO_VECTOR=MONO_VECTOR
 signature MONO_VECTOR_SLICE=MONO_VECTOR_SLICE
@@ -338,6 +342,7 @@ structure Bool=Bool
 structure Byte=Byte
 structure Char=Char
 structure CharArray=CharArray
+structure CharArraySlice=CharArraySlice
 structure CharVector=CharVector
 structure CharVectorSlice=CharVectorSlice
 structure Date=Date
@@ -379,6 +384,7 @@ structure Word8=Word8
 structure Word16=Word16
 structure Word32=Word32
 structure Word8Array=Word8Array
+structure Word8ArraySlice=Word8ArraySlice
 structure Word8Array2=Word8Array2
 structure Word8Vector=Word8Vector
 structure Word8VectorSlice=Word8VectorSlice
