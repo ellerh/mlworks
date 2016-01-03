@@ -182,7 +182,9 @@ require "__word8";
 require "mono_array";
 require "mono_array2";
 require "mono_vector";
+require "mono_vector_slice";
 require "__word8_vector";
+require "__word8_vector_slice";
 require "__word8_array";
 require "__word8_array2";
 require "__real_vector";
@@ -226,6 +228,7 @@ require "__bin_prim_io";
 require "__text_io";
 require "__bin_io";
 require "__char_vector";
+require "__char_vector_slice";
 require "__char_array";
 require "__int";
 require "__position";
@@ -284,6 +287,7 @@ require "__inet_sock";
 require "__unix_sock";
 
 signature ARRAY=ARRAY
+signature ARRAY_SLICE=ARRAY_SLICE
 signature ARRAY2=ARRAY2
 signature BOOL=BOOL
 signature STRING_CVT=STRING_CVT
@@ -292,6 +296,7 @@ signature WORD=WORD
 signature MONO_ARRAY=MONO_ARRAY
 signature MONO_ARRAY2=MONO_ARRAY2
 signature MONO_VECTOR=MONO_VECTOR
+signature MONO_VECTOR_SLICE=MONO_VECTOR_SLICE
 signature BYTE=BYTE
 signature TIME=TIME
 signature DATE=DATE
@@ -316,7 +321,6 @@ signature SUBSTRING=SUBSTRING
 signature TIMER=TIMER
 signature VECTOR=VECTOR
 signature VECTOR_SLICE=VECTOR_SLICE
-signature ARRAY_SLICE=ARRAY_SLICE
 signature BIN_IO=BIN_IO
 signature TEXT_IO=TEXT_IO
 signature TEXT_STREAM_IO=TEXT_STREAM_IO
@@ -326,6 +330,7 @@ signature COMMAND_LINE=COMMAND_LINE
 signature GENERAL=GENERAL
 
 structure Array=Array
+structure Array=ArraySlice
 structure Array2=Array2
 structure BinIO=BinIO
 structure BinPrimIO=BinPrimIO
@@ -334,6 +339,7 @@ structure Byte=Byte
 structure Char=Char
 structure CharArray=CharArray
 structure CharVector=CharVector
+structure CharVectorSlice=CharVectorSlice
 structure Date=Date
 structure General=General
 structure IEEEReal=IEEEReal
@@ -368,7 +374,6 @@ structure Time=Time
 structure Timer=Timer
 structure Vector=Vector
 structure VectorSlice=VectorSlice
-structure ArraySlice=ArraySlice
 structure Word=Word
 structure Word8=Word8
 structure Word16=Word16
@@ -376,6 +381,7 @@ structure Word32=Word32
 structure Word8Array=Word8Array
 structure Word8Array2=Word8Array2
 structure Word8Vector=Word8Vector
+structure Word8VectorSlice=Word8VectorSlice
 structure Word16Array=Word16Array
 structure Word16Array2=Word16Array2
 structure Word16Vector=Word16Vector
