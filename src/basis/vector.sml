@@ -76,7 +76,7 @@ signature VECTOR =
     val appi : (int * 'a -> unit) -> 'a vector -> unit
     val app : ('a -> unit) -> 'a vector -> unit
 
-    val foldli : ((int * 'a * 'b) -> 'b) -> 'b -> ('a vector * int * int option) -> 'b
+    val foldli : (int * 'a * 'b -> 'b) -> 'b -> 'a vector -> 'b
     val foldri : ((int * 'a * 'b) -> 'b) -> 'b -> ('a vector * int * int option) -> 'b
     val foldl : (('a * 'b) -> 'b) -> 'b -> 'a vector -> 'b
     val foldr : (('a * 'b) -> 'b) -> 'b -> 'a vector -> 'b

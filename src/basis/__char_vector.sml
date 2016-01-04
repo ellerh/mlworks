@@ -195,21 +195,6 @@ structure CharVector : MONO_VECTOR =
 	reduce(l-1, b)
       end
 
-    fun foldli f b (vector, i, j) =
-      let
-	val l = length vector
-	val len = case j of
-	  SOME len => i+len
-	| NONE => l
-	fun reduce(n, x) =
-	  if n >= len then
-	    x
-	  else
-	    reduce(n+1, f(n, sub(vector, n), x))
-      in
-	reduce(0, b)
-      end
-
     fun foldri f b (vector, i, j) =
       let
 	val l = length vector

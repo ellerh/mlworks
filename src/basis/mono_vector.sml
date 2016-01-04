@@ -84,8 +84,7 @@ signature MONO_VECTOR =
     val appi : (int * elem -> unit) -> vector -> unit
     val app : (elem -> unit) -> vector -> unit
 
-    val foldli : ((int * elem * 'a) -> 'a) -> 'a -> (vector * int * int option)
-                 -> 'a
+    val foldli : (int * elem * 'a -> 'a) -> 'a -> vector -> 'a
     val foldri : ((int * elem * 'a) -> 'a) -> 'a -> (vector * int * int option)
                  -> 'a
     val foldl : ((elem * 'a) -> 'a) -> 'a -> vector -> 'a
@@ -114,8 +113,7 @@ signature EQ_MONO_VECTOR =
     val appi : (int * elem -> unit) -> vector -> unit
     val app : (elem -> unit) -> vector -> unit
 
-    val foldli : ((int * elem * 'a) -> 'a) -> 'a -> (vector * int * int option)
-                 -> 'a
+    val foldli : (int * elem * 'a -> 'a) -> 'a -> vector -> 'a
     val foldri : ((int * elem * 'a) -> 'a) -> 'a -> (vector * int * int option)
                  -> 'a
     val foldl : ((elem * 'a) -> 'a) -> 'a -> vector -> 'a

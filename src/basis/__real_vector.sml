@@ -174,20 +174,6 @@ structure RealVector :> MONO_VECTOR where type elem = PreReal.real =
 	reduce(l-1, b)
       end
 
-    fun foldli f b (vector, i, j) =
-      let
-	val l = length vector
-	val len = check_slice(vector,i,j)
-
-	fun reduce(n, x) =
-	  if n = i+len then
-	    x
-	  else
-	    reduce(n+1, f(n, sub(vector, n), x))
-      in
-	reduce(i, b)
-      end
-
     fun foldri f b (vector, i, j) =
       let
 	val len = check_slice(vector,i,j)

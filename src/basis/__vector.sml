@@ -182,18 +182,6 @@ structure Vector : VECTOR =
 	reduce(l-1, b)
       end
 
-    fun foldli f b (vector, i, j) =
-      let
-	val len = check_slice(vector, i, j)
-	fun reduce(n, x) =
-	  if n >= len then
-	    x
-	  else
-	    reduce(n+1, f(n, sub(vector, n), x))
-      in
-	reduce(0, b)
-      end
-
     fun foldri f b (vector, i, j) =
       let
 	val len = check_slice (vector, i, j)
