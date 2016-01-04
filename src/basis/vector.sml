@@ -73,7 +73,7 @@ signature VECTOR =
 
     val concat : 'a vector list -> 'a vector
 
-    val appi : ((int * 'a) -> unit) -> ('a vector * int * int option) -> unit
+    val appi : (int * 'a -> unit) -> 'a vector -> unit
     val app : ('a -> unit) -> 'a vector -> unit
 
     val foldli : ((int * 'a * 'b) -> 'b) -> 'b -> ('a vector * int * int option) -> 'b

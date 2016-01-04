@@ -89,6 +89,7 @@
  *)
 
 require "mono_vector";
+require "_vector_ops";
 require "__string";
 require "__pre_basis";
 
@@ -123,6 +124,18 @@ structure CharVector : MONO_VECTOR =
 *)
       else String.sub(v, i)
 
+    local
+	structure Vec =
+	  struct
+	    type 'a elt = elem
+	    type 'a seq = vector
+	    val length = length
+	    val tabulate = tabulate
+	    val unsafeSub = sub
+	  end
+	structure Ops = VectorOps (Vec)
+    in open Ops end
+
     fun check_slice (array,i,SOME j) =
       if i < 0 orelse j < 0 orelse i + j > length array
         then raise Subscript
@@ -144,23 +157,7 @@ structure CharVector : MONO_VECTOR =
         String.substring (s,i,len)
       end
     val concat = concat
-
-    fun appi f (vector, i, j) =
-      let
-	val l = length vector
-	val len = case j of
-	  SOME len => i+len
-	| NONE => l
-	fun iterate n =
-	  if n >= l then
-	    ()
-	  else
-	    (ignore(f(n, sub(vector, n)));
-	     iterate(n+1))
-      in
-	iterate i
-      end
-
+    
     fun app f vector =
       let
 	val l = length vector

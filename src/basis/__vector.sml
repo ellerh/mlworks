@@ -145,19 +145,6 @@ structure Vector : VECTOR =
           else l - i
         end
 
-    fun appi f (vector, i, j) =
-      let
-	val len = check_slice(vector, i, j)
-	fun iterate n =
-	  if n >= i+len then
-	    ()
-	  else
-	    (ignore(f(n, sub(vector, n)));
-	     iterate(n+1))
-      in
-	iterate i
-      end
-
     fun app f vector =
       let
 	val l = length vector

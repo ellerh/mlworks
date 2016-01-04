@@ -691,6 +691,7 @@ BASIS1 =	basis/__pre_basis \
 		basis/string \
 		basis/_slice \
 		basis/_vector_slice \
+		basis/_vector_ops \
 		basis/_array_slice \
 		basis/__string \
 		basis/__char_vector \
@@ -702,7 +703,6 @@ BASIS1 =	basis/__pre_basis \
 		basis/__char_array \
 		basis/__char_array_slice \
 		basis/__array \
-		basis/_vector_ops \
 		basis/__vector \
 		basis/array2 \
 		basis/__array2 \

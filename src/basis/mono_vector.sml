@@ -81,7 +81,7 @@ signature MONO_VECTOR =
     val sub      : (vector * int) -> elem
     val concat   : vector list -> vector
 
-    val appi : ((int * elem) -> unit) -> (vector * int * int option) -> unit
+    val appi : (int * elem -> unit) -> vector -> unit
     val app : (elem -> unit) -> vector -> unit
 
     val foldli : ((int * elem * 'a) -> 'a) -> 'a -> (vector * int * int option)
@@ -111,7 +111,7 @@ signature EQ_MONO_VECTOR =
     val extract  : (vector * int * int option) -> vector
     val concat   : vector list -> vector
 
-    val appi : ((int * elem) -> unit) -> (vector * int * int option) -> unit
+    val appi : (int * elem -> unit) -> vector -> unit
     val app : (elem -> unit) -> vector -> unit
 
     val foldli : ((int * elem * 'a) -> 'a) -> 'a -> (vector * int * int option)
@@ -125,4 +125,3 @@ signature EQ_MONO_VECTOR =
     val mapi : (int * elem -> elem) -> vector * int * int option -> vector
 
   end
-
