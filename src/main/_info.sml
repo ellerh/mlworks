@@ -143,6 +143,7 @@ Initial revision
  *)
 
 require "../basis/__char_array";
+require "../basis/__char_array_slice";
 require "../basis/__char_vector";
 require "../basis/__text_io";
 require "../basis/__text_prim_io";
@@ -228,9 +229,9 @@ functor Info (structure Location : LOCATION) : INFO =
     val null_writer =
       let
 	fun null_fun_vec {buf, i, sz} = 
-          CharVector.length(CharVector.extract(buf,i,sz))
-	fun null_fun_arr {buf, i, sz} = 
-          CharVector.length(CharArray.extract(buf,i,sz))
+          CharVectorSlice.length(CharVectorSlice.slice(buf,i,sz))
+	fun null_fun_arr {buf : CharArray.array, i, sz} = 
+          CharArraySlice.length(CharArraySlice.slice(buf,i,sz))
 	val null_fun_option = fn _ => NONE
       in
 	TextPrimIO.WR

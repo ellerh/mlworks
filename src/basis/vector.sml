@@ -71,8 +71,6 @@ signature VECTOR =
 
     val update : 'a vector * int * 'a -> 'a vector
 
-    val extract : ('a vector * int * int option) -> 'a vector
-
     val concat : 'a vector list -> 'a vector
 
     val appi : ((int * 'a) -> unit) -> ('a vector * int * int option) -> unit

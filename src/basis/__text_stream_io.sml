@@ -66,6 +66,7 @@
 require "text_stream_io";
 require "_stream_io";
 require "__char_vector";
+require "__char_vector_slice";
 require "__char_array";
 require "__char";
 require "__substring";
@@ -77,6 +78,7 @@ struct
   local
     structure S = StreamIO(structure PrimIO = TextPrimIO
                            structure Vector = CharVector
+			   structure VectorSlice = CharVectorSlice
                            structure Array = CharArray
                            val someElem = Char.chr 0);
   in

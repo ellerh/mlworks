@@ -118,6 +118,7 @@
 
 require "mono_array";
 require "mono_vector";
+require "mono_vector_slice";
 require "__io";
 require "prim_io";
 require "stream_io";
@@ -133,14 +134,17 @@ exception TerminatedStream
 exception ClosedStream;
 *)
 
-functor StreamIO(structure PrimIO : PRIM_IO
-                 structure Vector : MONO_VECTOR
-                 structure Array: MONO_ARRAY
-                 val someElem : PrimIO.elem
-               sharing type PrimIO.vector=Array.vector=Vector.vector
-               sharing type PrimIO.array=Array.array
-               sharing type Array.elem = PrimIO.elem = Vector.elem
-                 ) : STREAM_IO =
+functor StreamIO (
+    structure PrimIO : PRIM_IO
+    structure Vector : MONO_VECTOR
+    structure VectorSlice : MONO_VECTOR_SLICE
+    structure Array: MONO_ARRAY
+    val someElem : PrimIO.elem
+    sharing type PrimIO.vector = Array.vector = Vector.vector
+				 = VectorSlice.vector
+    sharing type PrimIO.array=Array.array
+    sharing type Array.elem = PrimIO.elem = Vector.elem = VectorSlice.elem)
+	: STREAM_IO =
  struct
     structure PrimIO=PrimIO
     type elem = PrimIO.elem
@@ -243,13 +247,15 @@ functor StreamIO(structure PrimIO : PRIM_IO
                            rest=buf'}         
                         end handle e => handler(buffer,mlOp,e))
          end
-       
+
+    val extract = VectorSlice.vector o VectorSlice.slice
+
     fun generalizedInput (filbuf': buffer -> {eof: bool, rest: buffer}) 
 	              : instream -> vector * instream =
     let fun get(In{pos,buffer as Buf{data,...}}) =
        let val len = Vector.length data
         in if pos < len
-	    then (Vector.extract(data, pos, SOME (len - pos)),
+	    then (extract(data, pos, SOME (len - pos)),
 		  In{pos=len,buffer=buffer})
 	    else case filbuf' buffer
 		  of {eof=true,rest} => (empty,In{pos=0,buffer=rest})
@@ -342,10 +348,10 @@ functor StreamIO(structure PrimIO : PRIM_IO
     fun listInputN(In{pos,buffer as Buf{data,...}}, n) =
        let val len = Vector.length data
         in if pos + n <= len
-	        then ([Vector.extract(data,pos,SOME n)],
+	        then ([extract(data,pos,SOME n)],
                        In{pos=pos+n,buffer=buffer})
 	    else if pos < len
-		then let val hd = Vector.extract(data,pos,SOME (len-pos))
+		then let val hd = extract(data,pos,SOME (len-pos))
 		         val (tl,f') = listInputN(In{pos=len,buffer=buffer},
 						  n-(len-pos))
 		      in (hd::tl,f')

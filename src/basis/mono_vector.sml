@@ -79,7 +79,6 @@ signature MONO_VECTOR =
 
     val length   : vector -> int
     val sub      : (vector * int) -> elem
-    val extract  : (vector * int * int option) -> vector
     val concat   : vector list -> vector
 
     val appi : ((int * elem) -> unit) -> (vector * int * int option) -> unit

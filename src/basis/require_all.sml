@@ -440,30 +440,19 @@ functor PrimIO (
     val compare = compare);
 
 functor StreamIO (
-          structure PrimIO : PRIM_IO
-          structure Vector : MONO_VECTOR
-          structure Array: MONO_ARRAY
-          val someElem : PrimIO.elem
-          sharing type PrimIO.vector = Array.vector = Vector.vector
-          sharing type PrimIO.array = Array.array
-          sharing type Array.elem = PrimIO.elem = Vector.elem
-        ) : STREAM_IO =
+    structure PrimIO : PRIM_IO
+    structure Vector : MONO_VECTOR
+    structure VectorSlice : MONO_VECTOR_SLICE
+    structure Array: MONO_ARRAY
+    val someElem : PrimIO.elem
+    sharing type PrimIO.vector = Array.vector = Vector.vector
+				 = VectorSlice.vector
+    sharing type PrimIO.array = Array.array
+    sharing type Array.elem = PrimIO.elem = Vector.elem = VectorSlice.elem
+) : STREAM_IO =
   StreamIO (
     structure PrimIO = PrimIO
     structure Vector = Vector
+    structure VectorSlice = VectorSlice
     structure Array = Array
     val someElem = someElem);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
