@@ -14,12 +14,11 @@ structure CharVectorSlice : MONO_VECTOR_SLICE = struct
 
     structure Vec =
       struct
-	val alloc = PreBasis.alloc_string
-	val unsafeSub = chr o I.unsafe_string_sub
-	fun unsafeUpdate (v, i, c) = I.unsafe_string_update (v, i, ord c)
 	type 'a elt = V.elem
 	type 'a seq = V.vector
 	val length = V.length
+	val unsafeSub = chr o I.unsafe_string_sub
+	val tabulate = V.tabulate
       end
 
     structure VS = VectorSlice (Vec)

@@ -76,17 +76,16 @@ structure Vector : VECTOR =
 	    type 'a elt = 'a
 	    type 'a seq = 'a vector
 	    val length = MLWorks.Internal.Vector.length
-	    fun unsafeAlloc size : 'a vector = I.cast (I.alloc_vector size)
-	    fun alloc i = unsafeAlloc (check_size i)
+	    fun tabulate (size, f) =
+	      MLWorks.Internal.Vector.tabulate (check_size size, f)
 	    val unsafeSub = I.unsafe_record_sub
-	    val unsafeUpdate = I.unsafe_record_update
 	  end
 	structure Ops = VectorOps (Vec)
     in
     open Ops
     end
 
-    fun fromList l = 
+    fun fromList l =
       (ignore(check_size (length l)); MLWorks.Internal.Vector.vector l)
     fun tabulate (n,f) = MLWorks.Internal.Vector.tabulate (check_size n, f)
     val length = MLWorks.Internal.Vector.length

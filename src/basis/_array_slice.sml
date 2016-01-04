@@ -21,10 +21,8 @@ functor ArraySlice (
 		  val unsafeUpdate : 'a array * int * 'a elt -> unit
 	      end
     structure Vec : sig
-		  val alloc : int -> 'a vector
+		  val tabulate : int * (int -> 'a elt) -> 'a vector
 		  val unsafeSub : 'a vector * int -> 'a elt
-		  val unsafeUpdate :
-		      'a vector * int * 'a elt -> unit
 	      end
     structure VecSlice : sig
 		  type 'a slice
@@ -49,12 +47,7 @@ functor ArraySlice (
 	end
 
     fun vector (SLICE {seq, start, stop}) =
-      let val v = Vec.alloc (stop - start)
-	  fun loop i j =
-	    if i = stop then v
-	    else (Vec.unsafeUpdate (v, j, Arr.unsafeSub (seq, i));
-		  loop (i + 1) (j + 1))
-      in loop start 0 end
+      Vec.tabulate (stop - start, fn i => Arr.unsafeSub (seq, start + i))
 
     fun copy {src as SLICE {seq, start, stop}, dst, di} =
       let val len = stop - start

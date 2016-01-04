@@ -16,59 +16,49 @@ functor VectorOps
 		 type 'a elt
 		 type 'a seq
 		 val length : 'a seq -> int
-		 val alloc : int -> 'a seq
+		 val tabulate : int * (int -> 'a elt) -> 'a seq
 		 val unsafeSub : 'a seq * int -> 'a elt
-		 val unsafeUpdate : 'a seq * int * 'a elt -> unit
 	     end) =
   struct
 
     fun fromList l =
-      let val len = length l
-	  val result = V.alloc len
-	  fun loop [] i = result
-	    | loop (x :: xs) i =
-	      (V.unsafeUpdate (result, i, x);
-	       loop xs (i + 1))
-      in loop l 0 end
-
-    fun tabulate (len, f) =
-      let val result = V.alloc len
-	  fun loop i =
-	    if i = len then result
-	    else (V.unsafeUpdate (result, i, f i);
-		  loop (i + 1))
-      in loop 0 end
-
-    local
-	fun copy (src, start, stop, dst, di) =
-	  let fun loop s d =
-		if s = stop then ()
-		else (V.unsafeUpdate (dst, d, V.unsafeSub (src, s));
-		      loop (s + 1) (d + 1))
-	  in loop start di end
-    in
+      let val cache = ref {i = 0, l = l}
+	  fun lookup d =
+	    let val {i, l} = !cache
+	    in if d = i then
+		   let val x :: xs = l
+		   in cache := {i = i + 1, l = xs};
+		      x
+		   end
+	       else raise Fail "non-sequential tabulate (?)"
+	    end
+      in V.tabulate (length l, lookup) end
 
     fun update (v, i, x) =
-      let val len = V.length v
-	  val result = V.alloc len
-	  val _ = copy (v, 0, len, result, 0)
-	  val _ = V.unsafeUpdate (result, i, x)
-      in result end
+      V.tabulate (V.length v, fn d => if d = i then x else V.unsafeSub (v, d))
 
-    fun concat [] = V.alloc 0
+    fun concat (l as []) = V.tabulate (0, fn _ => V.unsafeSub (hd l, 0))
       | concat [v] = v
-      | concat l =
+      | concat (l as v :: vs) =
 	let fun count [] sum = sum
 	      | count (v :: vs) sum = count vs (sum + (V.length v))
 	    val total = count l 0
-	    val result = V.alloc total
-	    fun init [] _ = result
-	      | init (v :: vs) i =
-		let val len = V.length v
-		    val _ = copy (v, 0, len, result, i)
-		in init vs (i + len) end
-	in init l 0 end
-    end
+	    val cache = ref {start = 0, stop = V.length v, v = v, vs = vs}
+	    fun lookup i =
+	      let val {start, stop, v, vs} = !cache
+	      in
+		  if start <= i andalso i < stop then
+		      V.unsafeSub (v, i - start)
+		  else if i = stop then
+		      let val v :: vs = vs
+		      in
+			  cache := {start = stop, stop = stop + V.length v,
+				    v = v, vs = vs};
+			  lookup i
+		      end
+		  else raise Fail "non-sequential tabulate?"
+	      end
+	in V.tabulate (total, lookup) end
 
     local
 	  structure VS = VectorSlice (V)

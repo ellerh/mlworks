@@ -14,19 +14,12 @@ structure Word8VectorSlice : MONO_VECTOR_SLICE = struct
 
     structure Vec =
       struct
-	fun check_size n = if n < 0 orelse n > V.maxLen then raise Size else n
-	fun unsafeAlloc size : V.vector = I.cast (I.alloc_string (size + 1))
-	fun alloc size = unsafeAlloc (check_size size)
-
-	fun unsafeSub (v : V.vector, i) =
-	  Word8.fromInt (I.unsafe_string_sub (I.cast v, i))
-
-	fun unsafeUpdate (v : V.vector, i, c) =
-	  I.unsafe_string_update (I.cast v, i, Word8.toInt c)
-
 	type 'a elt = V.elem
 	type 'a seq = V.vector
 	val length = V.length
+	val tabulate = V.tabulate
+	fun unsafeSub (v : V.vector, i) =
+	  Word8.fromInt (I.unsafe_string_sub (I.cast v, i))
       end
 
     structure VS = VectorSlice (Vec)

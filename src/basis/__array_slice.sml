@@ -26,11 +26,8 @@ structure ArraySlice : ARRAY_SLICE =
 
     structure Vec =
       struct
-	fun check_size n = if n < 0 orelse n > V.maxLen then raise Size else n
-	fun unsafeAlloc size : 'a V.vector = I.cast (I.alloc_vector size)
-	fun alloc size = unsafeAlloc (check_size size)
+	val tabulate = V.tabulate
 	val unsafeSub = I.unsafe_record_sub
-	val unsafeUpdate = I.unsafe_record_update
       end
 
     structure S = ArraySlice (type 'a elt = 'a

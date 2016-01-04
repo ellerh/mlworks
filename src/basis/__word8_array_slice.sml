@@ -28,17 +28,9 @@ structure Word8ArraySlice : MONO_ARRAY_SLICE =
 
     structure Vec =
       struct
-	type 'a vector = V.vector
-	fun check_size n = if n < 0 orelse n > V.maxLen then raise Size else n
-	fun unsafeAlloc len : V.vector = I.cast (I.alloc_string (len + 1))
-	fun alloc len = unsafeAlloc (check_size len)
-
+	val tabulate = V.tabulate
 	fun unsafeSub (v : V.vector, i) =
 	  Word8.fromInt (I.unsafe_string_sub (I.cast v, i))
-
-	fun unsafeUpdate (v : V.vector, i, c) =
-	  I.unsafe_string_update (I.cast v, i, Word8.toInt c)
-
       end
 
     structure AS = ArraySlice (

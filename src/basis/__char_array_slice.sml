@@ -3,11 +3,11 @@
  * This code has been placed in the public domain.
  *)
 
-require "_array_slice"
-require "__char_array"
-require "__char_vector"
-require "mono_array_slice"
-require "__char_vector_slice"
+require "_array_slice";
+require "__char_array";
+require "__char_vector";
+require "mono_array_slice";
+require "__char_vector_slice";
 require "__pre_basis";
 
 structure CharArraySlice : MONO_ARRAY_SLICE =
@@ -28,9 +28,8 @@ structure CharArraySlice : MONO_ARRAY_SLICE =
 
     structure Vec =
       struct
-	val alloc = PreBasis.alloc_string
+	val tabulate = V.tabulate
 	val unsafeSub = chr o I.unsafe_string_sub
-	fun unsafeUpdate (v, i, c) = I.unsafe_string_update (v, i, ord c)
       end
 
     structure AS = ArraySlice (
