@@ -58,6 +58,7 @@
  *)
 
 require "vector";
+require "_vector_ops";
 
 structure Vector : VECTOR =
   struct
@@ -67,6 +68,24 @@ structure Vector : VECTOR =
 
     val maxLen = MLWorks.Internal.Vector.maxLen
     fun check_size n = if n < 0 orelse n > maxLen then raise Size else n
+
+    local
+	structure I = MLWorks.Internal.Value
+	structure Vec =
+	  struct
+	    type 'a elt = 'a
+	    type 'a seq = 'a vector
+	    val length = MLWorks.Internal.Vector.length
+	    fun unsafeAlloc size : 'a vector = I.cast (I.alloc_vector size)
+	    fun alloc i = unsafeAlloc (check_size i)
+	    val unsafeSub = I.unsafe_record_sub
+	    val unsafeUpdate = I.unsafe_record_update
+	  end
+	structure Ops = VectorOps (Vec)
+    in
+    open Ops
+    end
+
     fun fromList l = 
       (ignore(check_size (length l)); MLWorks.Internal.Vector.vector l)
     fun tabulate (n,f) = MLWorks.Internal.Vector.tabulate (check_size n, f)

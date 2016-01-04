@@ -69,6 +69,8 @@ signature VECTOR =
 
     val sub : ('a vector * int) -> 'a
 
+    val update : 'a vector * int * 'a -> 'a vector
+
     val extract : ('a vector * int * int option) -> 'a vector
 
     val concat : 'a vector list -> 'a vector
@@ -84,4 +86,8 @@ signature VECTOR =
     val map  : ('a -> 'b) -> 'a vector -> 'b vector
     val mapi : (int * 'a -> 'b) -> 'a vector * int * int option -> 'b vector
 
+    val find  : ('a -> bool) -> 'a vector -> 'a option
+    val exists : ('a -> bool) -> 'a vector -> bool
+    val all : ('a -> bool) -> 'a vector -> bool
+    val collate : ('a * 'a -> order) -> 'a vector * 'a vector -> order
   end
