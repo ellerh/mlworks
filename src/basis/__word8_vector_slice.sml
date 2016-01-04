@@ -12,11 +12,11 @@ structure Word8VectorSlice : MONO_VECTOR_SLICE = struct
     structure V = Word8Vector
     structure I = MLWorks.Internal.Value
 
-    structure Intrinsics =
+    structure Vec =
       struct
 	fun check_size n = if n < 0 orelse n > V.maxLen then raise Size else n
-	fun unsafeAlloc len : V.vector = I.cast (I.alloc_string (len + 1))
-	fun alloc len = unsafeAlloc (check_size len)
+	fun unsafeAlloc size : V.vector = I.cast (I.alloc_string (size + 1))
+	fun alloc size = unsafeAlloc (check_size size)
 
 	fun unsafeSub (v : V.vector, i) =
 	  Word8.fromInt (I.unsafe_string_sub (I.cast v, i))
@@ -24,21 +24,12 @@ structure Word8VectorSlice : MONO_VECTOR_SLICE = struct
 	fun unsafeUpdate (v : V.vector, i, c) =
 	  I.unsafe_string_update (I.cast v, i, Word8.toInt c)
 
-	fun unsafeCopy (src, si, len, dst, di) =
-	  let val stop = si + len
-	      fun loop si di =
-		if si = stop then ()
-		else (unsafeUpdate (dst, di, unsafeSub (src, si));
-		      loop (si + 1) (di + 1))
-	  in loop si di end
-
 	type 'a elt = V.elem
 	type 'a seq = V.vector
 	val length = V.length
       end
 
-    structure VS = VectorSlice (Intrinsics)
-
+    structure VS = VectorSlice (Vec)
     open VS
     type elem = V.elem
     type slice = elem slice

@@ -334,7 +334,7 @@ signature COMMAND_LINE=COMMAND_LINE
 signature GENERAL=GENERAL
 
 structure Array=Array
-structure Array=ArraySlice
+structure ArraySlice=ArraySlice
 structure Array2=Array2
 structure BinIO=BinIO
 structure BinPrimIO=BinPrimIO

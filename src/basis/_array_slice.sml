@@ -13,27 +13,21 @@ require "_slice";
 
 functor ArraySlice (
     type 'a elt
-    structure Arr :
-	      sig
-
+    type 'a vector
+    structure Arr : sig
 		  type 'a array
 		  val length : 'a array -> int
 		  val unsafeSub : 'a array * int -> 'a elt
-		  val unsafeUpdate :
-		      'a array * int * 'a elt -> unit
-		  val unsafeCopy : 'a array * int * int * 'a array * int
-				   -> unit
+		  val unsafeUpdate : 'a array * int * 'a elt -> unit
 	      end
-    type 'a vector
-    structure Vec :
-	      sig
+    structure Vec : sig
 		  val alloc : int -> 'a vector
 		  val unsafeSub : 'a vector * int -> 'a elt
 		  val unsafeUpdate :
 		      'a vector * int * 'a elt -> unit
 	      end
-    structure VecSlice :
-	      sig type 'a slice
+    structure VecSlice : sig
+		  type 'a slice
 		  val base : 'a slice -> 'a vector * int * int
 	      end) =
   struct
@@ -64,20 +58,32 @@ functor ArraySlice (
 
     fun copy {src as SLICE {seq, start, stop}, dst, di} =
       let val len = stop - start
+	  val dstop = di + len
+	  fun copyUp s d =
+	    if s = stop then ()
+	    else (Arr.unsafeUpdate (dst, d, Arr.unsafeSub (seq, s));
+		  copyUp (s + 1) (d + 1))
+	  fun copyDown s d =
+	    if s < start then ()
+	    else (Arr.unsafeUpdate (dst, d, Arr.unsafeSub (seq, s));
+		  copyDown (s - 1) (d - 1))
       in
-	  if 0 <= di andalso di + len <= Arr.length dst
-	  then Arr.unsafeCopy (seq, start, len, dst, di)
-	  else raise Subscript
+	  if di < 0 orelse Arr.length dst < dstop then
+	      raise Subscript
+	  else if start < di andalso di <= stop then
+	      copyDown (stop - 1) (dstop - 1)
+	  else
+	      copyUp start di
       end
 
     fun copyVec {src, dst, di} =
 	let
 	    val (vec, si, len) = VecSlice.base src
 	    val stop = si + len
-	    fun loop si di =
-		if si = stop then ()
-		else (Arr.unsafeUpdate (dst, di, Vec.unsafeSub (vec, si));
-		      loop (si + 1) (di + 1))
+	    fun loop s d =
+		if s = stop then ()
+		else (Arr.unsafeUpdate (dst, d, Vec.unsafeSub (vec, s));
+		      loop (s + 1) (d + 1))
 	in
 	    if 0 <= di andalso di + len <= Arr.length dst then loop si di
 	    else raise Subscript

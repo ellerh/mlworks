@@ -15,37 +15,29 @@ structure CharArraySlice : MONO_ARRAY_SLICE =
     structure A = CharArray
     structure V = CharVector
     structure VS = CharVectorSlice
+    structure I = MLWorks.Internal.Value
 
     (* FIXME: find a way to access the underlying ByteArray *)
-    structure AIntrinsics =
+    structure Arr =
       struct
 	type 'a array = A.array
 	val length = A.length
 	val unsafeSub = A.sub
 	val unsafeUpdate = A.update
-
-	fun unsafeCopy (src, si, len, dst, di) =
-	  let val stop = si + len
-	      fun loop si di =
-		if si = stop then ()
-		else (unsafeUpdate (dst, di, unsafeSub (src, si));
-		      loop (si + 1) (di + 1))
-	  in loop si di end
       end
 
-    structure VIntrinsics =
+    structure Vec =
       struct
 	val alloc = PreBasis.alloc_string
-	val unsafeSub = chr o MLWorks.Internal.Value.unsafe_string_sub
-	fun unsafeUpdate (v, i, c) =
-	  MLWorks.Internal.Value.unsafe_string_update (v, i, ord c)
+	val unsafeSub = chr o I.unsafe_string_sub
+	fun unsafeUpdate (v, i, c) = I.unsafe_string_update (v, i, ord c)
       end
 
     structure AS = ArraySlice (
 	  type 'a elt = A.elem
-	  structure Arr = AIntrinsics
 	  type 'a vector = V.vector
-	  structure Vec = VIntrinsics
+	  structure Arr = Arr
+	  structure Vec = Vec
 	  structure VecSlice =
 	    struct
 	      type 'a slice = VS.slice

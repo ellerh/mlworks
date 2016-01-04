@@ -16,31 +16,27 @@ structure ArraySlice : ARRAY_SLICE =
     structure VS = VectorSlice
     structure I = MLWorks.Internal.Value
 
-    structure AIntrinsics =
+    structure Arr =
       struct
 	type 'a array = 'a A.array
 	val length = A.length
 	val unsafeSub =  I.unsafe_array_sub
 	val unsafeUpdate = I.unsafe_array_update
-	val unsafeCopy = MLWorks.Internal.ExtendedArray.copy
       end
 
-    structure VIntrinsics =
+    structure Vec =
       struct
-	fun unsafeAlloc size : 'a V.vector =
-	  I.cast
-	      (I.alloc_vector size)
-	fun alloc i =
-	  if 0 <= i andalso i <= V.maxLen then unsafeAlloc i
-	  else raise Size
+	fun check_size n = if n < 0 orelse n > V.maxLen then raise Size else n
+	fun unsafeAlloc size : 'a V.vector = I.cast (I.alloc_vector size)
+	fun alloc size = unsafeAlloc (check_size size)
 	val unsafeSub = I.unsafe_record_sub
 	val unsafeUpdate = I.unsafe_record_update
       end
 
     structure S = ArraySlice (type 'a elt = 'a
-			      structure Arr = AIntrinsics
 			      type 'a vector = 'a V.vector
-			      structure Vec = VIntrinsics
+			      structure Arr = Arr
+			      structure Vec = Vec
 			      structure VecSlice = VS)
 
     open S

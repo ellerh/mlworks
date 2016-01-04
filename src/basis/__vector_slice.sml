@@ -12,33 +12,18 @@ structure VectorSlice :> VECTOR_SLICE = struct
     structure V = Vector
     structure I = MLWorks.Internal.Value
 
-    structure Intrinsics =
+    structure Vec =
       struct
 	type 'a elt = 'a
 	type 'a seq = 'a V.vector
-
 	val length = V.length
-
-	fun unsafeAlloc size : 'a V.vector = I.cast (I.alloc_vector size)
-
-	fun alloc i =
-	  if 0 <= i andalso i <= V.maxLen then unsafeAlloc i
-	  else raise Size
-
+	fun check_size n = if n < 0 orelse n > V.maxLen then raise Size else n
+	fun alloc size : 'a seq = I.cast (I.alloc_vector (check_size size))
 	val unsafeSub = I.unsafe_record_sub
 	val unsafeUpdate = I.unsafe_record_update
-
-	fun unsafeCopy (src, si, len, dst, di) =
-	  let val stop = si + len
-	      fun loop si di =
-		if si = stop then ()
-		else (unsafeUpdate (dst, di, unsafeSub (src, si));
-		      loop (si + 1) (di + 1))
-	  in loop si di end
-
       end
 
-    structure VS = VectorSlice (Intrinsics)
+    structure VS = VectorSlice (Vec)
 
     open VS
 

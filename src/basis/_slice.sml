@@ -65,17 +65,17 @@ functor Slice (Sequence : sig
       else SOME (S.unsafeSub (seq, start),
 		 SLICE {seq = seq, start = start + 1, stop = stop})
 
-    fun appi f (SLICE {seq, start, stop}) =
+    fun appi (f : int * 'a S.elt -> unit) (SLICE {seq, start, stop}) =
       let fun loop i =
 	    if i = stop then ()
-	    else (ignore (f (i - start, (S.unsafeSub (seq, i))));
+	    else (f (i - start, (S.unsafeSub (seq, i)));
 		  loop (i + 1))
       in loop start end
 
-    fun app f (SLICE {seq, start, stop}) =
+    fun app (f : 'a S.elt -> unit) (SLICE {seq, start, stop}) =
       let fun loop i =
 	    if i = stop then ()
-	    else (ignore (f (S.unsafeSub (seq, i)));
+	    else (f (S.unsafeSub (seq, i));
 		  loop (i + 1))
       in loop start end
 
