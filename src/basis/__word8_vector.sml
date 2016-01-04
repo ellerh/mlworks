@@ -212,21 +212,6 @@ structure Word8Vector :> EQ_MONO_VECTOR
 	reduce(l-1, b)
       end
 
-    fun foldri f b (vector, i, j) =
-      let
-	val l = length vector
-	val len = case j of
-	  SOME len => i+len
-	| NONE => l
-	fun reduce(n, x) =
-	  if n < 0 then
-	    x
-	  else
-	    reduce(n-1, f(n, sub(vector, n), x))
-      in
-	reduce(len-1, b)
-      end
-
     fun map f v =
       let
         val l = size v
@@ -247,25 +232,4 @@ structure Word8Vector :> EQ_MONO_VECTOR
         newS
       end
 
-    fun mapi f (v, s, l) =
-      let
-         val l' = check_slice (v, s, l)
-         val newS = MLWorks.Internal.Value.alloc_string (l'+1)
-         val i = ref 0
-         val _ =
-           while (!i<l') do (
-             MLWorks.Internal.Value.unsafe_string_update
-               (newS, !i,
-                Word8.toInt (
-                  f(
-                    !i + s, 
-                    Word8.fromInt(
-                      MLWorks.Internal.Value.unsafe_string_sub(v, !i+s )))));
-             i := !i + 1)
-         val _ = 
-          MLWorks.Internal.Value.unsafe_string_update(newS, l', 0)
-      in
-         newS
-      end
-    
   end

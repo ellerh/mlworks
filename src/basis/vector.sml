@@ -77,12 +77,13 @@ signature VECTOR =
     val app : ('a -> unit) -> 'a vector -> unit
 
     val foldli : (int * 'a * 'b -> 'b) -> 'b -> 'a vector -> 'b
-    val foldri : ((int * 'a * 'b) -> 'b) -> 'b -> ('a vector * int * int option) -> 'b
+    val foldri : (int * 'a * 'b -> 'b) -> 'b -> 'a vector -> 'b
+
     val foldl : (('a * 'b) -> 'b) -> 'b -> 'a vector -> 'b
     val foldr : (('a * 'b) -> 'b) -> 'b -> 'a vector -> 'b
 
     val map  : ('a -> 'b) -> 'a vector -> 'b vector
-    val mapi : (int * 'a -> 'b) -> 'a vector * int * int option -> 'b vector
+    val mapi : (int * 'a -> 'b) -> 'a vector -> 'b vector
 
     val find  : ('a -> bool) -> 'a vector -> 'a option
     val exists : ('a -> bool) -> 'a vector -> bool

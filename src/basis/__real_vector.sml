@@ -174,19 +174,6 @@ structure RealVector :> MONO_VECTOR where type elem = PreReal.real =
 	reduce(l-1, b)
       end
 
-    fun foldri f b (vector, i, j) =
-      let
-	val len = check_slice(vector,i,j)
-
-	fun reduce(n, x) =
-	  if n < i then
-	    x
-	  else
-	    reduce(n-1, f(n, sub(vector, n), x))
-      in
-	reduce(i+len-1, b)
-      end
-
     fun map f v =
       let
         val l = length v
@@ -194,13 +181,5 @@ structure RealVector :> MONO_VECTOR where type elem = PreReal.real =
       in
         tabulate (l, f')
       end
-
-   fun mapi f (v, s, l) =
-     let 
-       val l' = check_slice (v, s, l)
-       fun f' i = f (i+s, sub(v, i+s))
-     in
-       tabulate (l', f')
-     end
 
   end
