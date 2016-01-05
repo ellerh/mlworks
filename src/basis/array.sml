@@ -84,7 +84,7 @@ signature ARRAY =
     val foldl : (('a * 'b) -> 'b) -> 'b -> 'a array -> 'b
     val foldr : (('a * 'b) -> 'b) -> 'b -> 'a array -> 'b
 
-    val modifyi : ((int * 'a) -> 'a) -> ('a array * int * int option) -> unit
+    val modifyi : ((int * 'a) -> 'a) -> 'a array -> unit
     val modify : ('a -> 'a) -> 'a array -> unit
 
     val findi : (int * 'a -> bool) -> 'a array -> (int * 'a) option

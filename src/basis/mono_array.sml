@@ -102,7 +102,7 @@ signature MONO_ARRAY =
     val foldl : ((elem * 'b) -> 'b) -> 'b -> array -> 'b
     val foldr : ((elem * 'b) -> 'b) -> 'b -> array -> 'b
 
-    val modifyi : ((int * elem) -> elem) -> (array * int * int option) -> unit
+    val modifyi : ((int * elem) -> elem) -> array -> unit
     val modify : (elem -> elem) -> array -> unit
 
   end

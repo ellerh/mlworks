@@ -265,20 +265,4 @@ structure Word8Array : MONO_ARRAY =
 	iterate 0
       end
 
-    fun modifyi f (array, i, j) =
-      let
-	val l = length array
-	val len = case j of
-	  SOME len => i+len
-	| NONE => l
-	fun iterate n =
-	  if n >= l then
-	    ()
-	  else
-	    (update(array, n, f(n, sub(array, n)));
-	     iterate(n+1))
-      in
-	iterate i
-      end
-
   end

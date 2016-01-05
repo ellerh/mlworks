@@ -222,18 +222,4 @@ structure RealArray : MONO_ARRAY where type elem = PreReal.real =
 	iterate 0
       end
 
-    fun modifyi f (array, i, j) =
-      let
-	val len = check_slice(array,i,j)
-
-	fun iterate n =
-	  if n = i+len then
-	    ()
-	  else
-	    (update(array, n, f(n, sub(array, n)));
-	     iterate(n+1))
-      in
-	iterate i
-      end
-
   end

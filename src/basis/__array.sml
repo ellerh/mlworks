@@ -192,16 +192,4 @@ structure Array : ARRAY =
 	iterate 0
       end
 
-    fun modifyi f (array, i, j) =
-      let
-        val len = check_slice (array,i,j)
-	fun iterate n =
-	  if n = len then () (* we have done *)
-	  else
-	    (update(array, i+n, f (i+n, sub (array, i+n)));
-	     iterate(n+1))
-      in
-	iterate 0
-      end
-
   end
