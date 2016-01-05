@@ -97,7 +97,7 @@ signature MONO_ARRAY =
     val appi : ((int * elem) -> unit) -> array -> unit
     val app : (elem -> unit) -> array -> unit
 
-    val foldli : ((int * elem * 'b) -> 'b) -> 'b -> (array * int * int option) -> 'b
+    val foldli : ((int * elem * 'b) -> 'b) -> 'b -> array -> 'b
     val foldri : ((int * elem * 'b) -> 'b) -> 'b -> (array * int * int option) -> 'b
     val foldl : ((elem * 'b) -> 'b) -> 'b -> array -> 'b
     val foldr : ((elem * 'b) -> 'b) -> 'b -> array -> 'b
