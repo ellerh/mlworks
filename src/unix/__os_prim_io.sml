@@ -162,6 +162,7 @@
 
 require "^.basis.__word8_vector";
 require "^.basis.__char_array";
+require "^.basis.__char_array_slice";
 require "^.basis.__char_vector";
 require "^.basis.__char_vector_slice";
 require "^.basis.os_prim_io";
@@ -377,11 +378,11 @@ struct
                                     len-startPos)
                                  else (pos:=(!pos+n); n)
         in
-          CharArray.copyVec {src=s, si= !pos, len=SOME num_elems,
-                             dst=buf, di=i};
-          num_elems
+            CharArraySlice.copyVec
+		{src = CharVectorSlice.slice (s, !pos, SOME num_elems),
+		 dst=buf, di=i};
+            num_elems
         end
-      
     in
       TextPrimIO.RD
       {readVec=SOME(stringReadVec),

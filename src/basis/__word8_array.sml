@@ -166,7 +166,6 @@ structure Word8Array : MONO_ARRAY =
         else raise Subscript
       end
 
-    
     fun copy { src=A(src_ba), dst=A(dst_ba), di } =
       let
         val l = MLWorks.Internal.ByteArray.length src_ba
@@ -202,15 +201,8 @@ structure Word8Array : MONO_ARRAY =
           end
       end
 
-    fun copyVec {src, si, len, dst=A(dst_ba), di} =
-      let
-        val len =
-          case len of
-            SOME l => l
-          | _ => Word8Vector.length src - si
-      in
-        copyv_ba(src, si, len, dst_ba, di)
-      end
+    fun copyVec {src, dst=A(dst_ba), di} =
+      copyv_ba (src, 0, Word8Vector.length src, dst_ba, di)
 
     fun app f vector =
       let

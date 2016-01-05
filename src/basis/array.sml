@@ -74,7 +74,7 @@ signature ARRAY =
     val extract : ('a array * int * int option) -> 'a vector
 
     val copy : {src : 'a array, dst : 'a array, di : int} -> unit
-    val copyVec : {src : 'a vector, si : int, len : int option, dst : 'a array, di : int} -> unit
+    val copyVec : {src : 'a vector, dst : 'a array, di : int} -> unit
 
     val appi : ((int * 'a) -> unit) -> 'a array -> unit
     val app : ('a -> unit) -> 'a array -> unit

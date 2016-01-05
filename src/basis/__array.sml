@@ -135,12 +135,9 @@ structure Array : ARRAY =
     fun copy {src, dst, di} =
       MLWorks.Internal.ExtendedArray.copy(src, 0, length src, dst, di)
 
-    fun copyVec{src : 'a vector, si : int, len, dst : 'a array, di : int} =
+    fun copyVec {src : 'a vector, dst : 'a array, di : int} =
       let
-	val len = case len of
-	  SOME len => len
-	| NONE => MLWorks.Internal.Vector.length src-si
-
+	val len = MLWorks.Internal.Vector.length src
 	fun copy (from, start, finish, to, start') =
 	  let
 	    val l1 = MLWorks.Internal.Vector.length from
@@ -165,7 +162,7 @@ structure Array : ARRAY =
 	      end
 	  end
       in
-	copy(src, si, si+len, dst, di)
+	copy (src, 0, len, dst, di)
       end
 
     val app = MLWorks.Internal.ExtendedArray.iterate

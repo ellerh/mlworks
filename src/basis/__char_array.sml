@@ -199,15 +199,8 @@ structure CharArray : MONO_ARRAY =
           end
       end
 
-    fun copyVec {src, si, len, dst=A(dst_ba), di} =
-      let
-        val len =
-          case len of
-            SOME l => l
-          | _ => CharVector.length src - si
-      in
-        copyv_ba(src, si, len, dst_ba, di)
-      end
+    fun copyVec {src, dst=A(dst_ba), di} =
+      copyv_ba (src, 0, CharVector.length src, dst_ba, di)
 
     fun app f vector =
       let

@@ -135,6 +135,11 @@ exception TerminatedStream
 exception ClosedStream;
 *)
 
+(* FIXME: The standard doesn't have VectorSlice and ArraySlice
+   arguments.  Since those slices are only needed in two places, it
+   would good to get rid of these remainng two uses by implementing
+   the needed ops "manually".
+ *)
 functor StreamIO (
     structure PrimIO : PRIM_IO
     structure Vector : MONO_VECTOR
@@ -670,8 +675,7 @@ functor StreamIO (
           val p = !pos
 	  fun copy offset =
 	    ((if slen = 0 then ()
-	      else Array.copyVec {src=s, si=0, len=SOME slen,
-				  dst=data, di=offset});
+	      else Array.copyVec {src=s, dst=data, di=offset});
              pos := offset + slen)
         in if p+slen < blen
              then copy p
