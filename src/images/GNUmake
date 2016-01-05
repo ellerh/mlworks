@@ -788,6 +788,7 @@ BASIS2 =	basis/os_io \
 		basis/__word32_array \
 		basis/__word32_array2 \
 		basis/__real_vector \
+		basis/__real_vector_slice \
 		basis/__real_array \
 		basis/__real_array2 \
 		basis/__int8 \
