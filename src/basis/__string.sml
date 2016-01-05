@@ -269,27 +269,6 @@ structure String : STRING =
           else l - i
         end
 
-    fun mapi f (st, s, l) =
-      let
-         val l' = check_slice (st, s, l)
-         val newS = MLWorks.Internal.Value.alloc_string (l' + 1)
-         val i = ref 0
-         val _ =
-           while (!i<l') do (
-             MLWorks.Internal.Value.unsafe_string_update
-               (newS, !i,
-                ord (f (!i + s, 
-                        chr(MLWorks.Internal.Value.unsafe_string_sub(st, !i+s )
-                           )
-                       )
-                    )
-               ) ; 
-             i := !i + 1)
-         val _ = MLWorks.Internal.Value.unsafe_string_update (newS, l', 0)
-      in
-         newS
-      end
-    
     fun translate _ "" = ""
       | translate (p:char -> string) (s:string) : string = 
       let 
