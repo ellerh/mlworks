@@ -57,8 +57,10 @@
  *)
 
 require "mono_array";
+require "_array_ops";
 require "__pre_real";
 require "__real_vector";
+require "__real_vector_slice";
 
 structure RealArray : MONO_ARRAY where type elem = PreReal.real =
   struct
@@ -72,20 +74,46 @@ structure RealArray : MONO_ARRAY where type elem = PreReal.real =
     fun check_size n =
       if n < 0 orelse n > maxLen then raise Size else n
 
-
     fun array (i, e) = F.array (check_size i, e)
     fun tabulate (i, f) = F.tabulate (check_size i,f)
 
-    (* uses toplevel List.length which is overridden afterwards *)
-
-    fun fromList [] = F.array(0,0.0)
-      | fromList l =
-      if length l> maxLen then raise Size else F.from_list l
-      
+    val llength = length (* remember toplevel List.length *)
     val length = F.length
     val sub = F.sub
     val update = F.update
     val cast = MLWorks.Internal.Value.cast
+
+    local
+	structure V = RealVector
+	structure VS = RealVectorSlice
+	structure Arr =
+	  struct
+	    type 'a array = array
+	    val length = length
+	    val tabulate = tabulate
+	    val array = array
+	    val unsafeSub = sub
+	    val unsafeUpdate = update
+	  end
+	structure Vec =
+	  struct
+	    val tabulate = V.tabulate
+	    val unsafeSub = V.sub
+	  end
+	structure Ops = ArrayOps (type 'a elt = elem
+				  type 'a vector = vector
+				  structure Arr = Arr
+				  structure Vec = Vec
+				  structure VecSlice = struct
+				      type 'a slice = VS.slice
+				      val base = VS.base
+				    end)
+    in open Ops end
+
+
+    fun fromList [] = F.array(0,0.0)
+      | fromList l =
+      if llength l> maxLen then raise Size else F.from_list l
 
     fun check_slice (array,i,SOME j) =
       if i < 0 orelse j < 0 orelse i + j > length array
@@ -155,20 +183,6 @@ structure RealArray : MONO_ARRAY where type elem = PreReal.real =
 	     iterate(n+1))
       in
 	iterate 0
-      end
-
-    fun appi f (array, i, j) =
-      let
-        val len = check_slice(array,i,j)
-
-	fun iterate' n =
-	  if n >= i+ len then
-	    ()
-	  else
-	    (ignore(f (n, sub (array, n)));
-	     iterate'(n+1))
-      in
-	iterate' i
       end
 
     fun foldl f b array =

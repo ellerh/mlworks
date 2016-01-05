@@ -89,6 +89,8 @@
 require "mono_array";
 require "__word8";
 require "__word8_vector";
+require "__word8_vector_slice";
+require "_array_ops";
 
 structure Word8Array : MONO_ARRAY =
   struct
@@ -108,6 +110,37 @@ structure Word8Array : MONO_ARRAY =
 
     fun tabulate (i : int, f : int -> elem) : array =
       A (MLWorks.Internal.ByteArray.tabulate (check_size i,cast f))
+
+    local
+	structure V = Word8Vector
+	structure VS = Word8VectorSlice
+	structure BA = MLWorks.Internal.ByteArray
+	structure I = MLWorks.Internal.Value
+	structure Arr =
+	  struct
+	    type 'a array = array
+	    fun length (A ba) = BA.length ba
+	    val tabulate = tabulate
+	    val array = array
+	    fun unsafeSub (A ba, i) : elem =
+	      I.cast (I.unsafe_bytearray_sub (ba, i))
+	    fun unsafeUpdate (A ba, i, x : elem) =
+	      I.cast (I.unsafe_bytearray_update (ba, i, I.cast x))
+	  end
+	structure Vec =
+	  struct
+	    val tabulate = V.tabulate
+	    val unsafeSub = V.sub
+	  end
+	structure Ops = ArrayOps (type 'a elt = elem
+				  type 'a vector = vector
+				  structure Arr = Arr
+				  structure Vec = Vec
+				  structure VecSlice = struct
+				      type 'a slice = VS.slice
+				      val base = VS.base
+				    end)
+    in open Ops end
 
     (* uses toplevel List.length which is overridden afterwords *)
     fun fromList (l : elem list) : array =
@@ -193,22 +226,6 @@ structure Word8Array : MONO_ARRAY =
 	     iterate(n+1))
       in
 	iterate 0
-      end
-
-    fun appi f (array, i, j) =
-      let
-	val l = length array
-	val len = case j of
-	  SOME len => i+len
-	| NONE => l
-	fun iterate' n =
-	  if n >= len then
-	    ()
-	  else
-	    (ignore(f (n, sub (array, n)));
-	     iterate'(n+1))
-      in
-	iterate' i
       end
 
     fun foldl f b array =

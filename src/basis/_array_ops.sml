@@ -17,7 +17,7 @@ functor ArrayOps (
     structure Arr : sig
 		  eqtype 'a array
 		  val length : 'a array -> int
-		  val array0 : unit -> 'a array
+		  val tabulate : int * (int -> 'a elt) -> 'a array
 		  val array : int * 'a elt -> 'a array
 		  val unsafeSub : 'a array * int -> 'a elt
 		  val unsafeUpdate : 'a array * int * 'a elt -> unit
@@ -31,11 +31,17 @@ functor ArrayOps (
 		  val base : 'a slice -> 'a vector * int * int
 	      end) =
   struct
-    structure A = Arr
-    structure V = Vec
-    structure VS = VecSlice
+    local
+	structure A = Arr
+	structure V = Vec
+	structure AS = ArraySlice (type 'a elt = 'a elt
+				   type 'a vector = 'a vector
+				   structure Arr = Arr
+				   structure Vec = Vec
+				   structure VecSlice = VecSlice)
+    in
 
-    fun fromList [] = A.array0 ()
+    fun fromList (l as []) = A.tabulate (0, fn _ => hd l)
       | fromList (first :: rest) =
 	let val len = 1 + length rest
 	    val result = A.array (len, first)
@@ -45,24 +51,8 @@ functor ArrayOps (
 		 loop xs (i + 1))
 	in loop rest 1 end
 
-    fun tabulate (0, _) = A.array0 ()
-      | tabulate (len, f) =
-	let val result = A.array (len, f 0)
-	    fun loop i =
-	      if i = len then result
-	      else (A.unsafeUpdate (result, i, f i);
-		    loop (i + 1))
-	in loop 1 end
-
     fun vector a = V.tabulate (A.length a, fn i => A.unsafeSub (a, i))
 
-    local
-	structure AS = ArraySlice (type 'a elt = 'a elt
-				   type 'a vector = 'a vector
-				   structure Arr = Arr
-				   structure Vec = Vec
-				   structure VecSlice = VecSlice)
-    in
     fun appi f a = AS.appi f (AS.full a)
     fun app  f a = AS.app f (AS.full a)
     fun modifyi f a = AS.modifyi f (AS.full a)

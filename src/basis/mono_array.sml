@@ -94,7 +94,7 @@ signature MONO_ARRAY =
                         dst : array, di : int
                       } -> unit
 
-    val appi : ((int * elem) -> unit) -> (array * int * int option) -> unit
+    val appi : ((int * elem) -> unit) -> array -> unit
     val app : (elem -> unit) -> array -> unit
 
     val foldli : ((int * elem * 'b) -> 'b) -> 'b -> (array * int * int option) -> 'b

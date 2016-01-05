@@ -76,7 +76,7 @@ signature ARRAY =
     val copy : {src : 'a array, si : int, len : int option, dst : 'a array, di : int} -> unit
     val copyVec : {src : 'a vector, si : int, len : int option, dst : 'a array, di : int} -> unit
 
-    val appi : ((int * 'a) -> unit) -> ('a array * int * int option) -> unit
+    val appi : ((int * 'a) -> unit) -> 'a array -> unit
     val app : ('a -> unit) -> 'a array -> unit
 
     val foldli : ((int * 'a * 'b) -> 'b) -> 'b -> ('a array * int * int option) -> 'b

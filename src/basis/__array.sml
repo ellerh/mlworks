@@ -95,6 +95,8 @@ structure Array : ARRAY =
 
     fun array (n,i) = 
       MLWorks.Internal.Array.array (check_size n,i)
+    fun tabulate (n,f) =
+      MLWorks.Internal.Array.tabulate (check_size n,f)
 
     val sub = MLWorks.Internal.Array.sub
     val update = MLWorks.Internal.Array.update
@@ -106,7 +108,7 @@ structure Array : ARRAY =
 	  struct
 	    type 'a array = 'a array
 	    val length = length
-	    fun array0 () = MLWorks.Internal.Array.array (0, I.cast 0)
+	    val tabulate = tabulate
 	    val array = array
 	    val unsafeSub =  I.unsafe_array_sub
 	    val unsafeUpdate = I.unsafe_array_update
@@ -122,9 +124,6 @@ structure Array : ARRAY =
 				  structure Vec = Vec
 				  structure VecSlice = VectorSlice)
     in open Ops end
-
-    fun tabulate (n,f) =
-      MLWorks.Internal.Array.tabulate (check_size n,f)
 
     fun extract(array, i, j) =
       let
@@ -175,19 +174,6 @@ structure Array : ARRAY =
       end
 
     val app = MLWorks.Internal.ExtendedArray.iterate
-
-    fun appi f (array, i, j) =
-      let
-        val len = check_slice (array,i,j)
-	fun iterate' n =
-	  if n >= i + len then
-	    ()
-	  else
-	    (ignore(f (n, sub (array, n)));
-	     iterate'(n+1))
-      in
-	iterate' i
-      end
 
     val foldl = fn f => fn b => fn array => MLWorks.Internal.ExtendedArray.reducel (fn (a, b) => f (b, a)) (b, array)
 

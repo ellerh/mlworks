@@ -26,10 +26,9 @@ functor VectorOps
 	  fun lookup d =
 	    let val {i, l} = !cache
 	    in if d = i then
-		   let val x :: xs = l
-		   in cache := {i = i + 1, l = xs};
-		      x
-		   end
+		   case l of
+		       x :: xs => (cache := {i = i + 1, l = xs}; x)
+		     | [] => raise Fail "bug in tabulate"
 	       else raise Fail "non-sequential tabulate (?)"
 	    end
       in V.tabulate (length l, lookup) end
@@ -50,12 +49,12 @@ functor VectorOps
 		  if start <= i andalso i < stop then
 		      V.unsafeSub (v, i - start)
 		  else if i = stop then
-		      let val v :: vs = vs
-		      in
-			  cache := {start = stop, stop = stop + V.length v,
-				    v = v, vs = vs};
-			  lookup i
-		      end
+		      case vs of
+			  v :: vs =>
+			  (cache := {start = stop, stop = stop + V.length v,
+				     v = v, vs = vs};
+			   lookup i)
+		       | [] => raise Fail "bug in tabulate"
 		  else raise Fail "non-sequential tabulate?"
 	      end
 	in V.tabulate (total, lookup) end
