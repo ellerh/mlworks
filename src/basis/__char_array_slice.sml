@@ -9,7 +9,11 @@ require "__char_vector";
 require "mono_array_slice";
 require "__char_vector_slice";
 
-structure CharArraySlice : MONO_ARRAY_SLICE =
+structure CharArraySlice :> MONO_ARRAY_SLICE
+                              where type vector = CharVector.vector
+			      where type vector_slice = CharVectorSlice.slice
+                              where type array = CharArray.array
+                              where type elem = char =
   struct
     structure A = CharArray
     structure V = CharVector
