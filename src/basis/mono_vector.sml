@@ -93,6 +93,10 @@ signature MONO_VECTOR =
     val map  : (elem -> elem) -> vector -> vector
     val mapi : (int * elem -> elem) -> vector -> vector
 
+    val find  : (elem -> bool) -> vector -> elem option
+    val exists : (elem -> bool) -> vector -> bool
+    val all : (elem -> bool) -> vector -> bool
+    val collate : (elem * elem -> order) -> vector * vector -> order
   end
 
 signature EQ_MONO_VECTOR =
@@ -107,7 +111,6 @@ signature EQ_MONO_VECTOR =
 
     val length   : vector -> int
     val sub      : (vector * int) -> elem
-    val extract  : (vector * int * int option) -> vector
     val concat   : vector list -> vector
 
     val appi : (int * elem -> unit) -> vector -> unit
@@ -121,5 +124,10 @@ signature EQ_MONO_VECTOR =
 
     val map  : (elem -> elem) -> vector -> vector
     val mapi : (int * elem -> elem) -> vector -> vector
+
+    val find  : (elem -> bool) -> vector -> elem option
+    val exists : (elem -> bool) -> vector -> bool
+    val all : (elem -> bool) -> vector -> bool
+    val collate : (elem * elem -> order) -> vector * vector -> order
 
   end
