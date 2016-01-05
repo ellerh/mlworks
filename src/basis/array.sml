@@ -87,4 +87,9 @@ signature ARRAY =
     val modifyi : ((int * 'a) -> 'a) -> ('a array * int * int option) -> unit
     val modify : ('a -> 'a) -> 'a array -> unit
 
+    val findi : (int * 'a -> bool) -> 'a array -> (int * 'a) option
+    val find  : ('a -> bool) -> 'a array -> 'a option
+    val exists : ('a -> bool) -> 'a array -> bool
+    val all : ('a -> bool) -> 'a array -> bool
+    val collate : ('a * 'a -> order) -> 'a array * 'a array -> order
   end

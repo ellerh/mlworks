@@ -58,6 +58,9 @@
  *)
 
 require "array";
+require "_array_ops";
+require "__vector";
+require "__vector_slice";
 
 structure Array : ARRAY =
   struct
@@ -92,15 +95,36 @@ structure Array : ARRAY =
 
     fun array (n,i) = 
       MLWorks.Internal.Array.array (check_size n,i)
-    fun tabulate (n,f) = 
-      MLWorks.Internal.Array.tabulate (check_size n,f)
 
     val sub = MLWorks.Internal.Array.sub
     val update = MLWorks.Internal.Array.update
 
-    (* FIXME: inefficient *)
-    fun vector array =
-	MLWorks.Internal.Vector.tabulate(length array, fn i => sub (array, i))
+    local
+	structure V = Vector
+	structure I = MLWorks.Internal.Value
+	structure Arr =
+	  struct
+	    type 'a array = 'a array
+	    val length = length
+	    fun array0 () = MLWorks.Internal.Array.array (0, I.cast 0)
+	    val array = array
+	    val unsafeSub =  I.unsafe_array_sub
+	    val unsafeUpdate = I.unsafe_array_update
+	  end
+	structure Vec =
+	  struct
+	    val tabulate = V.tabulate
+	    val unsafeSub = I.unsafe_record_sub
+	  end
+	structure Ops = ArrayOps (type 'a elt = 'a
+				  type 'a vector = 'a V.vector
+				  structure Arr = Arr
+				  structure Vec = Vec
+				  structure VecSlice = VectorSlice)
+    in open Ops end
+
+    fun tabulate (n,f) =
+      MLWorks.Internal.Array.tabulate (check_size n,f)
 
     fun extract(array, i, j) =
       let
