@@ -83,14 +83,20 @@
 
 require "../system/__os";
 require "mono_vector";
+require "mono_vector_slice";
 require "mono_array";
+require "mono_array_slice";
 require "prim_io";
 
 functor PrimIO(include sig
-                 structure A : MONO_ARRAY
-                 structure V : MONO_VECTOR
-               end sharing type A.vector = V.vector
-                       and type A.elem = V.elem
+                   structure A : MONO_ARRAY
+		   structure ArraySlice : MONO_ARRAY_SLICE
+		   structure V : MONO_VECTOR
+		   structure VectorSlice : MONO_VECTOR_SLICE
+               end
+	       sharing type A.vector = V.vector = ArraySlice.vector
+	       and type A.elem = V.elem = ArraySlice.elem = VectorSlice.elem
+	       and type A.array = ArraySlice.array
 	       val someElem : A.elem
 	       type pos
 	       val compare : pos * pos -> order) : PRIM_IO =
@@ -150,13 +156,15 @@ functor PrimIO(include sig
 		      | NONE => raise Fail "unexpected blocking operation"))
 
 
+    val extract' = ArraySlice.vector o ArraySlice.slice
+
     fun augmentReader (r as RD r') =
       let
 	fun readaToReadv reada i =
 	  let
 	    val a = A.array(i,someElem)
 	  in case reada{buf=a,i=0,sz=SOME i}
-	    of SOME i' => SOME(A.extract(a,0,SOME i'))
+	    of SOME i' => SOME(extract' (a,0,SOME i'))
 	  | NONE => NONE  
 	  end
 
@@ -244,7 +252,7 @@ functor PrimIO(include sig
 	    val nelems = case sz of
 	      SOME i => i
 	    | NONE => A.length buf - i
-	    val v = A.extract(data,first,SOME nelems)
+	    val v = extract' (data,first,SOME nelems)
 	  in
 	    writev{buf=v,i=0,sz=SOME nelems}
 	  end

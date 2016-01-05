@@ -54,7 +54,7 @@ signature ARRAY =
   sig
 
     eqtype  'a array
-    eqtype  'a vector
+    type  'a vector
 
     val maxLen : int
 
@@ -71,7 +71,6 @@ signature ARRAY =
     val update : ('a array * int * 'a) -> unit
 
     val vector : 'a array -> 'a vector
-    val extract : ('a array * int * int option) -> 'a vector
 
     val copy : {src : 'a array, dst : 'a array, di : int} -> unit
     val copyVec : {src : 'a vector, dst : 'a array, di : int} -> unit

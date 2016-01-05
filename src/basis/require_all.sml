@@ -424,17 +424,24 @@ functor ImperativeIO (
 functor PrimIO (
           include sig
             structure A : MONO_ARRAY
+	    structure ArraySlice : MONO_ARRAY_SLICE
             structure V : MONO_VECTOR
+	    structure VectorSlice : MONO_VECTOR_SLICE
           end
-          sharing type A.vector = V.vector
-          sharing type A.elem = V.elem
+          sharing type A.vector = V.vector = VectorSlice.vector
+				  = ArraySlice.vector
+          sharing type A.elem = V.elem = VectorSlice.elem
+				= ArraySlice.elem
+          sharing type A.array = ArraySlice.array
           val someElem : A.elem
           type pos
           val compare : pos * pos -> order
         ) : PRIM_IO =
   PrimIO (
     structure A = A
+    structure ArraySlice = ArraySlice
     structure V = V
+    structure VectorSlice = VectorSlice
     val someElem = someElem
     type pos = pos
     val compare = compare);

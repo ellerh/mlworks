@@ -58,7 +58,9 @@
  *)
 
 require "__char_vector";
+require "__char_vector_slice";
 require "__char_array";
+require "__char_array_slice";
 require "__char";
 require "prim_io";
 require "_prim_io";
@@ -70,7 +72,9 @@ structure TextPrimIO : PRIM_IO
 		       where type elem = Char.char
 
                     =  PrimIO (structure A = CharArray
+			       structure ArraySlice = CharArraySlice
                                structure V = CharVector
+			       structure VectorSlice = CharVectorSlice
                                val someElem = Char.chr 0
                                type pos = Position.int
                                val compare =

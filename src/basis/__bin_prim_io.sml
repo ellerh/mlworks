@@ -51,7 +51,9 @@
  *)
 
 require "__word8_vector";
+require "__word8_vector_slice";
 require "__word8_array";
+require "__word8_array_slice";
 require "__word8";
 require "prim_io";
 require "_prim_io";
@@ -65,7 +67,9 @@ structure BinPrimIO : PRIM_IO
 		       where type pos = Position.int
 
                     =  PrimIO (structure A = Word8Array
+			       structure ArraySlice = Word8ArraySlice
                                structure V = Word8Vector
+			       structure VectorSlice = Word8VectorSlice
                                val someElem = 0w0 : Word8.word
                                type pos = Position.int
                                val compare = 

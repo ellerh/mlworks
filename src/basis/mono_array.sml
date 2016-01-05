@@ -84,7 +84,6 @@ signature MONO_ARRAY =
     val length      : array -> int
     val sub         : (array * int) -> elem
     val update      : (array * int * elem) -> unit
-    val extract     : (array * int * int option) -> vector
 
     val copy        : {src : array,  dst : array, di : int} -> unit
     val copyVec     : {src : vector, dst : array, di : int} -> unit
