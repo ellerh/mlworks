@@ -3,15 +3,19 @@
  * This code has been placed in the public domain.
  *)
 
-require "_array_slice"
-require "__word8_array"
-require "__word8_vector"
-require "mono_array_slice"
-require "__word8_vector_slice"
-require "__word8"
+require "_array_slice";
+require "__word8_array";
+require "__word8_vector";
+require "mono_array_slice";
+require "__word8_vector_slice";
+require "__word8";
 
-structure Word8ArraySlice : MONO_ARRAY_SLICE =
-  struct
+structure Word8ArraySlice :> MONO_ARRAY_SLICE  (* OPTIONAL *)
+                               where type vector = Word8Vector.vector
+                               where type vector_slice = Word8VectorSlice.slice
+                               where type array = Word8Array.array
+                               where type elem = Word8.word
+  = struct
     structure A = Word8Array
     structure V = Word8Vector
     structure VS = Word8VectorSlice

@@ -53,6 +53,8 @@ functor ArrayOps (
 
     fun vector a = V.tabulate (A.length a, fn i => A.unsafeSub (a, i))
 
+    fun copy {src, dst, di} = AS.copy {src = AS.full src, dst = dst, di = di}
+
     fun appi f a = AS.appi f (AS.full a)
     fun app  f a = AS.app f (AS.full a)
     fun modifyi f a = AS.modifyi f (AS.full a)

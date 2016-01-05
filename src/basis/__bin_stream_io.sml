@@ -67,6 +67,7 @@ require "_stream_io";
 require "__word8_vector";
 require "__word8_vector_slice";
 require "__word8_array";
+require "__word8_array_slice";
 require "__word8";
 require "__bin_prim_io";
 
@@ -76,5 +77,6 @@ structure BinStreamIO =
 		      structure Vector = Word8Vector
 		      structure VectorSlice = Word8VectorSlice
 		      structure Array = Word8Array
+		      structure ArraySlice = Word8ArraySlice
 		      val someElem = 0w0: Word8.word)
 

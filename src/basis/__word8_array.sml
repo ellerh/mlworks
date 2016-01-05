@@ -167,15 +167,12 @@ structure Word8Array : MONO_ARRAY =
       end
 
     
-    fun copy { src=A(src_ba), si, len, dst=A(dst_ba), di } =
+    fun copy { src=A(src_ba), dst=A(dst_ba), di } =
       let
-        val l = case len of
-          SOME l => l
-        | NONE => MLWorks.Internal.ByteArray.length src_ba - si
+        val l = MLWorks.Internal.ByteArray.length src_ba
       in
-        if si >= 0 andalso l >= 0 andalso si + l <= MLWorks.Internal.ByteArray.length src_ba
-          andalso di >= 0 andalso di + l <= MLWorks.Internal.ByteArray.length dst_ba
-          then MLWorks.Internal.ByteArray.copy(src_ba, si, si+l, dst_ba, di)
+        if di >= 0 andalso di + l <= MLWorks.Internal.ByteArray.length dst_ba
+          then MLWorks.Internal.ByteArray.copy(src_ba, 0, l, dst_ba, di)
         else raise Subscript
       end
 

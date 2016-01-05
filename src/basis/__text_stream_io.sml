@@ -68,6 +68,7 @@ require "_stream_io";
 require "__char_vector";
 require "__char_vector_slice";
 require "__char_array";
+require "__char_array_slice";
 require "__char";
 require "__substring";
 require "__text_prim_io";
@@ -80,6 +81,7 @@ struct
                            structure Vector = CharVector
 			   structure VectorSlice = CharVectorSlice
                            structure Array = CharArray
+			   structure ArraySlice = CharArraySlice
                            val someElem = Char.chr 0);
   in
 

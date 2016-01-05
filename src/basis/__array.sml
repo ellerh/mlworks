@@ -132,13 +132,8 @@ structure Array : ARRAY =
         MLWorks.Internal.Vector.tabulate(len, fn n => sub (array, n+i))
       end
 
-
-    fun copy {src, si, len, dst, di} =
-      let
-	val len = check_slice (src,si,len)
-      in
-	MLWorks.Internal.ExtendedArray.copy(src, si, si+len, dst, di)
-      end
+    fun copy {src, dst, di} =
+      MLWorks.Internal.ExtendedArray.copy(src, 0, length src, dst, di)
 
     fun copyVec{src : 'a vector, si : int, len, dst : 'a array, di : int} =
       let

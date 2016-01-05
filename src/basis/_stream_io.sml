@@ -117,6 +117,7 @@
  *)
 
 require "mono_array";
+require "mono_array_slice";
 require "mono_vector";
 require "mono_vector_slice";
 require "__io";
@@ -139,11 +140,13 @@ functor StreamIO (
     structure Vector : MONO_VECTOR
     structure VectorSlice : MONO_VECTOR_SLICE
     structure Array: MONO_ARRAY
+    structure ArraySlice : MONO_ARRAY_SLICE
     val someElem : PrimIO.elem
     sharing type PrimIO.vector = Array.vector = Vector.vector
-				 = VectorSlice.vector
-    sharing type PrimIO.array=Array.array
-    sharing type Array.elem = PrimIO.elem = Vector.elem = VectorSlice.elem)
+				 = VectorSlice.vector = ArraySlice.vector
+    sharing type PrimIO.array = Array.array = ArraySlice.array
+    sharing type Array.elem = PrimIO.elem = Vector.elem
+			      = VectorSlice.elem = ArraySlice.elem)
 	: STREAM_IO =
  struct
     structure PrimIO=PrimIO
@@ -532,10 +535,12 @@ functor StreamIO (
 		       writer=ref(PUTmore(PrimIO.WR{writeArr=SOME write,...})),
                         ...}) =
        let val p = !pos
+	   fun copy (src, si, len, dst, di) =
+	     ArraySlice.copy {src = ArraySlice.slice (src, si, len),
+			      dst = dst, di = di}
 	   fun loop i = if i<p 
 	        then loop(i+write{buf=data,i=i,sz=SOME(p-i)}
-			  handle e => (Array.copy{src=data,si=i,len=SOME (p-i),
-						dst=data,di=0};
+			  handle e => (copy (data, i, SOME (p-i), data, 0);
 				       pos := p-i;
 				       raise e))
 		else ()

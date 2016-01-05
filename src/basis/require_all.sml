@@ -444,15 +444,18 @@ functor StreamIO (
     structure Vector : MONO_VECTOR
     structure VectorSlice : MONO_VECTOR_SLICE
     structure Array: MONO_ARRAY
+    structure ArraySlice: MONO_ARRAY_SLICE
     val someElem : PrimIO.elem
     sharing type PrimIO.vector = Array.vector = Vector.vector
-				 = VectorSlice.vector
-    sharing type PrimIO.array = Array.array
-    sharing type Array.elem = PrimIO.elem = Vector.elem = VectorSlice.elem
+				 = VectorSlice.vector = ArraySlice.vector
+    sharing type PrimIO.array = Array.array = ArraySlice.array
+    sharing type Array.elem = PrimIO.elem = Vector.elem
+			      = VectorSlice.elem = ArraySlice.elem
 ) : STREAM_IO =
   StreamIO (
     structure PrimIO = PrimIO
     structure Vector = Vector
     structure VectorSlice = VectorSlice
     structure Array = Array
+    structure ArraySlice = ArraySlice
     val someElem = someElem);

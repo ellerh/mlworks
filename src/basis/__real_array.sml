@@ -145,7 +145,7 @@ structure RealArray : MONO_ARRAY where type elem = PreReal.real =
 
 
     
-    fun copy { src, si, len, dst, di } =
+    fun copy' { src, si, len, dst, di } =
       let
         val srcLen = length src
         val l = case len
@@ -161,10 +161,17 @@ structure RealArray : MONO_ARRAY where type elem = PreReal.real =
         else raise Subscript
       end
 
-
+    fun copy { src, dst, di } =
+      let
+        val l = length src
+      in
+        if di >= 0 andalso di + l <= length dst
+          then F.copy(src, 0, l, dst, di)
+        else raise Subscript
+      end
 
     fun copyVec {src, si, len, dst, di} =
-         copy {src=cast src,si=si,len=len,dst=dst,di=di}
+         copy' {src=cast src,si=si,len=len,dst=dst,di=di}
 
     (* this is based on the assumption that real vectors are
      * implemented as floatarrays too.
