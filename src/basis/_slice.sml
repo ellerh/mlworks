@@ -17,7 +17,9 @@ functor Slice (Sequence : sig
 		   val unsafeSub : 'a seq * int -> 'a elt
 	       end) =
   struct
-    structure S = Sequence
+    local
+	structure S = Sequence
+    in
 
     datatype 'a slice = SLICE of {seq : 'a S.seq, start : int, stop : int}
 
@@ -146,4 +148,5 @@ functor Slice (Sequence : sig
 		   | x => x
       in loop s1 s2 end
 
+  end
   end

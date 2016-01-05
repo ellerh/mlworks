@@ -10,6 +10,8 @@
  *)
 
 require "_slice";
+require "mono_vector";
+require "mono_vector_slice";
 
 functor VectorSlice
 	    (V : sig
@@ -21,13 +23,14 @@ functor VectorSlice
 	     end
 	    ) =
   struct
-    structure S = Slice (struct
-			    type 'a elt = 'a V.elt
-			    type 'a seq = 'a V.seq
-			    val length = V.length
-			    val unsafeSub = V.unsafeSub
-			  end)
-    open S
+    local
+	structure S = Slice (struct
+				type 'a elt = 'a V.elt
+				type 'a seq = 'a V.seq
+				val length = V.length
+				val unsafeSub = V.unsafeSub
+			      end)
+    in open S end
 
     fun vector (SLICE {seq, start, stop}) =
       if start = 0 andalso stop = V.length seq then seq
@@ -47,13 +50,13 @@ functor VectorSlice
 		      let val SLICE {seq, start=start', ...} = s
 		      in V.unsafeSub (seq, start' + (i - start)) end
 		  else if i = stop then
-		      let val s :: ss = ss
-		      in
-			  cache := {start = stop, stop = stop + length s,
-				    s = s, ss = ss};
-			  lookup i
-		      end
-		  else raise Fail "non-sequential tabulate?"
+		      case ss of
+			  s :: ss =>
+			  (cache := {start = stop, stop = stop + length s,
+				     s = s, ss = ss};
+			   lookup i)
+			| [] => raise Fail "bug in tabulate"
+		  else raise Fail "non-sequential tabulate? nyi"
 	      end
 	in V.tabulate (total, lookup) end
 
@@ -63,4 +66,21 @@ functor VectorSlice
     fun map f (SLICE {seq, start, stop}) =
       V.tabulate (stop - start, fn i => f (V.unsafeSub (seq, start + i)))
 
+  end
+
+functor MonoVectorSlice (MV : MONO_VECTOR) : MONO_VECTOR_SLICE =
+  struct
+    local structure S = VectorSlice (struct
+					type 'a elt = MV.elem
+					type 'a seq = MV.vector
+					val length = MV.length
+					val tabulate = MV.tabulate
+					val unsafeSub = MV.sub
+				      end)
+    in
+    open S
+    type slice = MV.elem S.slice
+    type elem = MV.elem
+    type vector = MV.vector
+    end
   end
