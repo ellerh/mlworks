@@ -80,7 +80,7 @@ signature ARRAY =
     val app : ('a -> unit) -> 'a array -> unit
 
     val foldli : ((int * 'a * 'b) -> 'b) -> 'b -> 'a array -> 'b
-    val foldri : ((int * 'a * 'b) -> 'b) -> 'b -> ('a array * int * int option) -> 'b
+    val foldri : ((int * 'a * 'b) -> 'b) -> 'b -> 'a array -> 'b
     val foldl : (('a * 'b) -> 'b) -> 'b -> 'a array -> 'b
     val foldr : (('a * 'b) -> 'b) -> 'b -> 'a array -> 'b
 

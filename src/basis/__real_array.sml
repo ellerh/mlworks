@@ -209,19 +209,6 @@ structure RealArray : MONO_ARRAY where type elem = PreReal.real =
 	reduce(l-1, b)
       end
 
-    fun foldri f b (array, i, j) =
-      let
-	val len = check_slice(array,i,j)
-
-	fun reduce (n, x) =
-	  if n < i then
-	    x
-	  else
-	    reduce(n-1, f(n, sub(array, n), x))
-      in
-	reduce(i+len-1, b)
-      end
-
     fun modify f array =
       let
 	val l = length array

@@ -252,21 +252,6 @@ structure Word8Array : MONO_ARRAY =
 	reduce(l-1, b)
       end
 
-    fun foldri f b (array, i, j) =
-      let
-	val l = length array
-	val len = case j of
-	  SOME len => i+len
-	| NONE => l
-	fun reduce (n, x) =
-	  if n < i then
-	    x
-	  else
-	    reduce(n-1, f(n, sub(array, n), x))
-      in
-	reduce(len-1, b)
-      end
-
     fun modify f array =
       let
 	val l = length array
