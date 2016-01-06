@@ -95,6 +95,7 @@ structure Substring :> SUBSTRING
     fun concat ssl = (String.concat o (map string)) ssl
     fun substring (s, i, len) = S.slice (s, i, SOME len)
     val extract = S.slice
+    val full = S.full
     (* FIXME: obsolete *)
     val all = S.full
     val isEmpty = S.isEmpty
@@ -160,20 +161,35 @@ structure Substring :> SUBSTRING
         splitAt (ss, res)
       end
 
-    fun isPrefix p ss =
-      let
-	val (s, i, slen) = S.base ss
-	val plen = String.size p
-      in
-	if plen > slen then false
-	else
-	  let fun scan pi si =
+    local
+	fun match (p, plen, s, start) =
+	  let fun loop pi si =
 		pi = plen orelse (String.sub (p, pi) = String.sub (s, si)
-				  andalso scan (pi + 1) (si + 1))
-	  in
-	    scan 0 i
-	  end
-      end
+				  andalso loop (pi + 1) (si + 1))
+	  in loop 0 start end
+    in
+
+    fun isPrefix p ss =
+      let val (s, start, slen) = S.base ss
+	  val plen = String.size p
+      in plen <= slen andalso match (p, plen, s, start) end
+
+    fun isSubstring p ss =
+      let val (s, start, slen) = S.base
+	  val stop = start + slen
+	  val plen = String.size p
+	  fun loop start =
+	    (plen <= stop - start andalso match (p, plen, s, start))
+	    orelse loop (start + 1)
+      in loop start end
+
+    fun isSuffix p ss =
+      let val (s, start, slen) = S.base ss
+	  val stop = start + slen
+	  val plen = String.size p
+      in plen <= slen andalso match (p, plen, s, stop - plen) end
+
+    end
 
     fun fields p ss =
       let
