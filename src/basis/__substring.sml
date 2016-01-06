@@ -80,8 +80,8 @@ require "__int";
 
 structure Substring :> SUBSTRING
                          where type substring = CharVectorSlice.slice
-		(* FIXME: where type string = String.string
-                         where type char = Char.char *) =
+			 where type string = String.string
+			 where type char = Char.char =
   struct
     structure String = String
     structure S = CharVectorSlice
@@ -175,12 +175,12 @@ structure Substring :> SUBSTRING
       in plen <= slen andalso match (p, plen, s, start) end
 
     fun isSubstring p ss =
-      let val (s, start, slen) = S.base
+      let val (s, start, slen) = S.base ss
 	  val stop = start + slen
 	  val plen = String.size p
 	  fun loop start =
-	    (plen <= stop - start andalso match (p, plen, s, start))
-	    orelse loop (start + 1)
+	    plen <= stop - start andalso (match (p, plen, s, start)
+					  orelse loop (start + 1))
       in loop start end
 
     fun isSuffix p ss =
