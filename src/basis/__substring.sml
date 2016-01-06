@@ -192,9 +192,7 @@ structure Substring :> SUBSTRING
         rev (scan (ii, ii, []))
       end
 
-    fun translate f ss =
-	String.concat (S.foldr (fn (c, list) => f c :: list) [] ss)
-
+    fun translate f ss = String.concat (map f (explode ss))
     fun dropl (p:char -> bool) ss : substring = #2(splitl p ss)
     fun takel (p:char -> bool) ss : substring = #1(splitl p ss)
     fun taker (p:char -> bool) ss : substring = #2(splitr p ss)
