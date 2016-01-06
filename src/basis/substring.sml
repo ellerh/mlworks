@@ -82,6 +82,7 @@ signature SUBSTRING =
     val size : substring -> int
     val extract : string * int * int option -> substring
     val concat : substring list -> string
+    val concatWith : string -> substring list -> string
     val explode : substring -> char list
     val isPrefix : string -> substring -> bool
     val isSubstring : string -> substring -> bool

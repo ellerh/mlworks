@@ -93,6 +93,7 @@ structure Substring :> SUBSTRING
     val base = S.base
     val string = String.substring o S.base
     fun concat ssl = (String.concat o (map string)) ssl
+    fun concatWith s ssl = String.concatWith s (map string ssl)
     fun substring (s, i, len) = S.slice (s, i, SOME len)
     val extract = S.slice
     val full = S.full
