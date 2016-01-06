@@ -74,122 +74,70 @@
 
 require "substring";
 require "__string";
+require "__char";
+require "__char_vector_slice";
+require "__int";
 
-structure Substring : SUBSTRING =
+structure Substring :> SUBSTRING
+                         where type substring = CharVectorSlice.slice
+		(* FIXME: where type string = String.string
+                         where type char = Char.char *) =
   struct
     structure String = String
-    datatype substring = SS of (string * int * int)
-      (* (s, i, n) 
-       * string
-       * index
-       * size
-       *)
-    fun base (SS arg) : string * int * int = arg
-    fun string (SS arg) : string = substring arg
+    structure S = CharVectorSlice
+
+    type substring = S.slice
+    type char = Char.char
+    type string = String.string
+
+    val base = S.base
+    val string = String.substring o S.base
     fun concat ssl = (String.concat o (map string)) ssl
+    fun substring (s, i, len) = S.slice (s, i, SOME len)
+    val extract = S.slice
+    (* FIXME: obsolete *)
+    val all = S.full
+    val isEmpty = S.isEmpty
+    val getc = S.getItem
 
-    fun substring (ok as (s, i, n)) : substring =
-      if 0 <= i andalso 0 <= n andalso (i+n) <= size s then
-        SS ok
-      else
-        raise Subscript	
-    fun extract (s, i, NONE) = substring (s, i, size s - i)
-      | extract (s, i, SOME n) = substring (s, i, n)
+    (* val first = Option.map #1 o S.getItem *)
+    fun first ss =
+      case S.getItem ss of
+	  SOME (c, _) => SOME c
+	| NONE => NONE
 
-    fun all (s:string) : substring = SS (s, 0, size s)
-    fun isEmpty (SS (_,_,0)) : bool = true
-      | isEmpty _ = false
-    fun getc (SS (_, _, 0)) : (char * substring) option = NONE
-      | getc (SS (s, i, n)) = SOME ( (String.sub(s, i)), SS(s, i+1, n-1))
-    fun first (SS (_, _, 0)) : char option = NONE
-      | first (SS (s, i, n)) = SOME ( (String.sub (s, i)))
-    fun triml (k:int) (SS (s, i, n)) : substring = 
-      if (k < 0) then raise Subscript
-      else if (k >= n) then SS(s, i+n, 0)
-           else SS (s, i+k, n-k)
-    fun trimr (k:int) (SS (s, i, n)) : substring = 
-      if (k < 0) then raise Subscript
-      else if (k >= n) then SS(s, i, 0)
-           else SS (s, i, n-k)
-    fun slice (SS (s, i, n), j, m: int option) : substring =
-      let val m = case m of
-        NONE => n - j
-      | SOME m => m
-      in
-        if j >= 0 andalso 
-          m >= 0 andalso
-          j + m <= n then
-          SS (s, i+j, m)
-        else
-          raise Subscript
-      end
-    
-    fun sub (SS (s, i, n), j:int):char = 
-      if j < 0 orelse j >= n then raise Subscript
-      else  (String.sub (s, i + j))
-	
+    fun triml k =
+      if k < 0 then raise Subscript
+      else fn ss => S.subslice (ss, 0, SOME (Int.max (k, S.length ss)))
 
-    fun explode (SS(s, i, n)) : char list = 
-      let
-        fun aux (acc, j) = 
-          if j < i then
-            acc
-          else
-            aux ((String.sub (s, j))::acc, j-1)
-      in
-        aux ([], i+n-1)
-      end
+    fun trimr k =
+      if k < 0 then raise Subscript
+      else fn ss => let val len = S.length ss
+			val k = Int.max (k, len)
+		    in S.subslice (ss, k, SOME (len - k)) end
 
-    fun foldl f acc (SS (s, i, n)) = 
-      let
-        fun aux (acc, i') = 
-          if i' < i+n then
-            aux (f (String.sub(s, i'), acc), i'+1)
-          else
-            acc
-      in
-        aux (acc, i)
-      end
-    fun foldr f acc (SS (s, i, n)) = 
-      let
-        fun aux (acc, i') = 
-          if i' >= i then
-            aux (f (String.sub (s, i'), acc), i'-1)
-          else
-            acc
-      in
-        aux (acc, i+n-1)
-      end
-
-    fun app (f: char -> unit) (SS (s, i, n)) : unit = 
-      let
-        fun aux j = 
-          if j < i+n then 
-            let in
-              f ( (String.sub (s, j)));
-              aux (j+1)
-            end
-          else ()
-      in
-        aux i
-      end
+    val slice = S.subslice
+    val sub = S.sub
+    fun explode ss = S.foldr (op ::) [] ss
+    val foldl = S.foldl
+    val foldr = S.foldr
+    val app = S.app
 
     (* slow versions: needs work *)
-    fun collate p (ss1, ss2) = 
+    fun collate p (ss1, ss2) =
       String.collate p (string ss1, string ss2)
-    fun compare (ss1, ss2) = 
+    fun compare (ss1, ss2) =
       String.compare (string ss1, string ss2)
-      
-    fun splitAt (ss as SS(s,ii,nn), j) = 
-      if j < 0 orelse j > nn then
-        raise Subscript
-      else
-        (SS (s, ii, j), SS (s, ii+j, nn-j))
 
-    fun splitl p (ss as SS(s, ii, nn)) =
+    fun splitAt (ss, i) =
+      (S.subslice (ss, 0, SOME i),
+       S.subslice (ss, i, NONE))
+
+    fun splitl p ss =
       let
+	val (s, ii, nn) = S.base ss
         val sz = ii+nn
-        fun scan j = 
+        fun scan j =
           if j < sz andalso p (String.sub (s, j)) then
             scan (j+1)
           else
@@ -199,11 +147,12 @@ structure Substring : SUBSTRING =
         splitAt (ss, res)
       end
 
-    fun splitr p (ss as SS(s,ii,nn)) =
-      let 
+    fun splitr p ss =
+      let
+	val (s, ii, nn) = S.base ss
         val sz = ii+nn
         val exit = ii-1
-        fun scan j = 
+        fun scan j =
           if j > exit andalso p (String.sub (s, j)) then
             scan (j-1)
           else
@@ -213,29 +162,28 @@ structure Substring : SUBSTRING =
         splitAt (ss, res)
       end
 
-    fun isPrefix p (ss as SS(s, i, n)) =
+    fun isPrefix p ss =
       let
-	val sz = size p
+	val (s, i, slen) = S.base ss
+	val plen = String.size p
       in
-	if sz > n then false
+	if plen > slen then false
 	else
-	  let
-	    fun scan i = 
-	      if i < sz then
-		String.sub(p, i) = sub(ss, i) andalso scan (i+1)
-	      else
-		true
+	  let fun scan pi si =
+		pi = plen orelse (String.sub (p, pi) = String.sub (s, si)
+				  andalso scan (pi + 1) (si + 1))
 	  in
-	    scan 0
+	    scan 0 i
 	  end
       end
 
-    fun fields p (ss as SS(s,ii,nn)) =
+    fun fields p ss =
       let
+	val (s,ii,nn) = S.base ss
         val sz = ii+nn
-        fun substr (i, j, acc) = SS (s, i, j-i) :: acc
-        fun scan (i, j, acc) = 
-          if j < sz then 
+        fun substr (i, j, acc) = S.slice (s, i, SOME (j-i)) :: acc
+        fun scan (i, j, acc) =
+          if j < sz then
             (if p (String.sub (s, j)) then
                scan (j+1, j+1, substr(i, j, acc))
              else
@@ -246,25 +194,18 @@ structure Substring : SUBSTRING =
         rev (scan (ii, ii, []))
       end
 
-    fun translate p (SS(s, i, n)) = 
-      let
-        fun aux (acc, i') = 
-          if i' < i+n then
-            aux (p (String.sub(s,i'))::acc, i'+1)
-          else
-            String.concat (rev acc)
-      in
-        aux ([], i)
-      end
-      
+    fun translate f ss =
+	String.concat (S.foldr (fn (c, list) => f c :: list) [] ss)
+
     fun dropl (p:char -> bool) ss : substring = #2(splitl p ss)
     fun takel (p:char -> bool) ss : substring = #1(splitl p ss)
     fun taker (p:char -> bool) ss : substring = #2(splitr p ss)
     fun dropr (p:char -> bool) ss : substring = #1(splitr p ss)
 
-    fun position t (ss as SS (s,ii, nn)) = 
+    fun position t ss =
       let
-        val size = size t
+	val (s, ii, nn) = S.base ss
+        val size = String.size t
         val sz = ii+nn-size
 
         fun compare (i, j) =
@@ -278,7 +219,7 @@ structure Substring : SUBSTRING =
 
         fun scan j =
           if j <= sz then
-            (if compare (0, j) then 
+            (if compare (0, j) then
                j
              else
                scan (j+1))
@@ -288,13 +229,14 @@ structure Substring : SUBSTRING =
       in
         splitAt (ss, res)
       end
-            
-    fun tokens p (SS (s,ii,nn)) = 
+
+    fun tokens p ss =
       let
+	val (s,ii,nn) = S.base ss
         val sz = ii+nn
-        fun substr (acc, x, y) = 
-          if x=y then acc else SS(s, x, y-x)::acc
-        fun skipSep (acc,x) = 
+        fun substr (acc, x, y) =
+          if x=y then acc else S.slice (s, x, SOME (y-x))::acc
+        fun skipSep (acc,x) =
           if x < sz then
             if p (String.sub (s, x)) then
               skipSep(acc, x+1)
@@ -314,13 +256,17 @@ structure Substring : SUBSTRING =
         rev (aux ([], ii, ii))
       end
 
-    fun size (SS (s,i,n)) = n
+    val size = S.length
 
     exception Span
 
-    fun span (SS(s1, i1, n1), SS(s2, i2, n2)) =
-        if (s1 = s2) andalso (i1 <= i2+n2)
-        then SS(s1, i1, i2+n2-i1)
-        else raise Span
+    fun span (ss1, ss2) =
+      let val (s1, i1, n1) = S.base ss1
+	  val (s2, i2, n2) = S.base ss2
+      in
+          if s1 = s2 andalso i1 <= i2 + n2
+          then S.slice (s1, i1, SOME (i2 + n2 - i1))
+          else raise Span
+      end
 
   end
