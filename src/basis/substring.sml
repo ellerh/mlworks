@@ -63,15 +63,10 @@ signature SUBSTRING =
     eqtype char
     eqtype string
 
-    (* FIXME: obsolete *)
-    structure String : STRING
-
     val base : substring -> (string * int * int)
     val string : substring -> string
     val substring : (string * int * int) -> substring
     val full : string -> substring
-    (* FIXME: obsolete *)
-    val all : string -> substring
     val isEmpty : substring -> bool
     val getc : substring -> (char * substring) option
     val first : substring -> char option
@@ -96,9 +91,9 @@ signature SUBSTRING =
     val dropr : (char -> bool) -> substring -> substring
     val takel : (char -> bool) -> substring -> substring
     val taker : (char -> bool) -> substring -> substring
-    val position : string -> substring -> (substring * substring) 
-    val translate : (char -> string) -> substring -> string  
-    val tokens : (char -> bool) -> substring -> substring list 
+    val position : string -> substring -> (substring * substring)
+    val translate : (char -> string) -> substring -> string
+    val tokens : (char -> bool) -> substring -> substring list
     val fields : (char -> bool) -> substring -> substring list
     val foldl : ((char * 'a) -> 'a) -> 'a -> substring -> 'a
     val foldr : ((char * 'a) -> 'a) -> 'a -> substring -> 'a

@@ -83,7 +83,6 @@ structure Substring :> SUBSTRING
 			 where type string = String.string
 			 where type char = Char.char =
   struct
-    structure String = String
     structure S = CharVectorSlice
 
     type substring = S.slice
@@ -97,8 +96,6 @@ structure Substring :> SUBSTRING
     fun substring (s, i, len) = S.slice (s, i, SOME len)
     val extract = S.slice
     val full = S.full
-    (* FIXME: obsolete *)
-    val all = S.full
     val isEmpty = S.isEmpty
     val getc = S.getItem
 
