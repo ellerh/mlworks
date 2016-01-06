@@ -108,13 +108,11 @@ structure Substring :> SUBSTRING
 
     fun triml k =
       if k < 0 then raise Subscript
-      else fn ss => S.subslice (ss, 0, SOME (Int.max (k, S.length ss)))
+      else fn ss => S.subslice (ss, Int.min (k, S.length ss), NONE)
 
     fun trimr k =
       if k < 0 then raise Subscript
-      else fn ss => let val len = S.length ss
-			val k = Int.max (k, len)
-		    in S.subslice (ss, k, SOME (len - k)) end
+      else fn ss => S.subslice (ss, 0, SOME (Int.max (0, S.length ss - k)))
 
     val slice = S.subslice
     val sub = S.sub
