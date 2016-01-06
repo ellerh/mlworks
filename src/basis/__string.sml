@@ -195,22 +195,33 @@ structure String : STRING =
         rev(aux (0, 0, []))
       end
 
-    fun isPrefix (s:string) (t:string) = 
-      let 
-        val size_s = size s 
-      in
-        if size_s > size t then false
-        else 
-          let fun aux i = 
-            if i < size_s then 
-              char_sub(s,i) = char_sub (t, i) andalso 
-              aux (i+1)
-            else
-              true
-          in
-            aux 0
-          end
-      end
+    local
+	fun match (p, plen, s, start) =
+	  let fun loop pi si =
+		pi = plen orelse (char_sub (p, pi) = char_sub (s, si)
+				  andalso loop (pi + 1) (si + 1))
+	  in loop 0 start end
+    in
+
+    fun isPrefix p s =
+      let val slen = size s
+	  val plen = size p
+      in plen <= slen andalso match (p, plen, s, 0) end
+
+    fun isSubstring p s =
+      let val stop = size s
+	  val plen = size p
+	  fun loop start =
+	    plen <= stop - start andalso (match (p, plen, s, start)
+					  orelse loop (start + 1))
+      in loop 0 end
+
+    fun isSuffix p s =
+      let val slen = size s
+	  val plen = size p
+      in plen <= slen andalso match (p, plen, s, slen - plen) end
+
+    end
 
     (* The bounds checking here uses unsigned comparisons as an optimisation.
        E.g. if size_s' > i' then we know both that size_s > i and i > 0
