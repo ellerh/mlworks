@@ -121,28 +121,6 @@ val test7 = check'(fn _ => length e = 203);
 
 val test8 = check'(fn _ => length (concat []) = 0);
 
-val f = Word8Vector.extract(e, 100, SOME 3)  
-
-val test9 = check'(fn _ => f == b);
-
-val test9a = check'(fn _ => e == extract(e, 0, SOME (length e)) 
-		    andalso e == extract(e, 0, NONE));
-val test9b = check'(fn _ => fromList [] == extract(e, 100, SOME 0));
-val test9c = (extract(e, ~1, SOME (length e))  seq "WRONG") 
-             handle Subscript => "OK" | _ => "WRONG"
-val test9d = (extract(e, length e + 1, SOME 0)  seq "WRONG") 
-             handle Subscript => "OK" | _ => "WRONG"
-val test9e = (extract(e, 0, SOME (length e+1)) seq "WRONG") 
-             handle Subscript => "OK" | _ => "WRONG"
-val test9f = (extract(e, 20, SOME ~1)        seq "WRONG") 
-             handle Subscript => "OK" | _ => "WRONG"
-val test9g = (extract(e, ~1, NONE)  seq "WRONG") 
-             handle Subscript => "OK" | _ => "WRONG"
-
-val test9h = (extract(e, length e + 1, NONE)  seq "WRONG") 
-             handle Subscript => "OK" | _ => "WRONG"
-val test9i = check'(fn _ => fromList [] == extract(e, length e, SOME 0)
-		    andalso fromList [] == extract(e, length e, NONE));
 
   (* Test map and mapi *)
   val v = (fromList' [0, 1, 2, 3, 4, 5, 6, 7]) ;
@@ -156,30 +134,6 @@ val test9i = check'(fn _ => fromList [] == extract(e, length e, SOME 0)
   val testAb = check'
          (fn _ => (map add1 (fromList' [])) == (fromList' [])) ;
   val testAc = check'
-         (fn _ => (mapi addi (v, 0, NONE)) == fromList' [0,2,4,6,8,10,12,14]);
-  val testAd = check'
-         (fn _ => (mapi addi (v, 1, NONE)) == fromList' [2,4,6,8,10,12,14]);
-  val testAe = check'
-         (fn _ => (mapi addi (v, 7, NONE)) == fromList' [14]);
-  val testAf = 
-         (ignore(mapi addi (v, ~1, NONE)); "WRONG") handle Subscript => "OKEXN"
-                                                  | _ => "WRONG EXN" ;
-  val testAga = check'
-         (fn _ => (mapi addi (v, 8, NONE)) == fromList' [])
-  val testAgb =
-         (ignore(mapi addi (v, 9, NONE)); "WRONG") handle Subscript => "OKEXN"
-                                                  | _ => "WRONG EXN" ;
-  val testAh =
-         check' (fn _ => mapi addi (v, 0, SOME 2) == fromList' [0, 2]) ;
-  val testAi =
-         check' (fn _ => mapi addi (v, 6, SOME 2) == fromList' [12,14]) ;
-  val testAj =
-         (ignore(mapi addi (v,7,SOME 2)); "WRONG") handle Subscript => "OKEXN"
-                                                 | _ => "WRONG EXN" ;
-  val testAk = check'
-         (fn _ => mapi addi (v, 2, SOME 0) == fromList' [])
-  val testAl =
-         (ignore(mapi addi (v, 2, SOME ~1)); "WRONG") handle Subscript => "OKEXN"
-                                                 | _ => "WRONG EXN" ;
+         (fn _ => (mapi addi v) == fromList' [0,2,4,6,8,10,12,14]);
 
 end;
