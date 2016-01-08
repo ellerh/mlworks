@@ -72,6 +72,7 @@ local
       andalso scan 0
     end
 
+  val extract = Word8ArraySlice.vector o Word8ArraySlice.slice
 
 in
 
@@ -116,10 +117,10 @@ val test6b = (c sub 7  seq "WRONG") handle Subscript => "OK" | _ => "WRONG";
 val test6c = check'(fn () => c sub 0 = i2w 0);
 
 val e = array(203, i2w 0);
-val _ = (copy{src=d, si=0, dst=e, di=0,        len=NONE}; 
-	 copy{src=b, si=0, dst=e, di=length d, len=NONE};
-	 copy{src=d, si=0, dst=e, di=length d + length b, len=NONE});
-	 
+val _ = (copy{src=d, dst=e, di=0};
+	 copy{src=b, dst=e, di=length d};
+	 copy{src=d, dst=e, di=length d + length b});
+
 fun a2v a = extract(a, 0, NONE);
 val ev = Word8Vector.concat [a2v d, a2v b, a2v d];
 
@@ -154,57 +155,24 @@ val test9i =
     check'(fn () => a2v (fromList []) == extract(e, length e, SOME 0)
 	   andalso a2v (fromList []) == extract(e, length e, NONE));
 
-val _ = copy{src=e, si=0, dst=e, di=0, len=NONE};
+val _ = copy{src=e, dst=e, di=0};
 val g = array(203, w127);
-val _ = copy{src=e, si=0, dst=g, di=0, len=NONE};
+val _ = copy{src=e, dst=g, di=0};
 
 val test10a = check'(fn () => ev == extract(e, 0, NONE)
 		      andalso ev == extract(e, 0, SOME (length e)));
 val test10b = check'(fn () => ev == extract(g, 0, NONE)
 		     andalso ev == extract(g, 0, SOME (length g)));
 
-val _ = copy{src=g, si=203, dst=g, di=0, len=SOME 0};
-val test10c = check'(fn () => ev == extract(g, 0, NONE));
-
-val _ = copy{src=g, si=0, dst=g, di=203, len=SOME 0};
-val test10d = check'(fn () => ev == extract(g, 0, NONE));
-
-val _ = copy{src=g, si=0, dst=g, di=1, len=SOME (length g-1)};
-val test10e = check'(fn () => a2v b == extract(g, 101, SOME 3));
-
-val _ = copy{src=g, si=1, dst=g, di=0, len=SOME(length g-1)};
-val test10f = check'(fn () => a2v b == extract(g, 100, SOME 3));
-
-val _ = copy{src=g, si=202, dst=g, di=202, len=SOME 1};
-val test10g = check'(fn () => g sub 202 = i2w ((202-1-103) mod 7));
 val test10h = check'(fn () =>
-		     (copy{src=array0, si=0, dst=array0, di=0, len=NONE}; 
-		      array0 <> array(0, w127)));
-val test10i = check'(fn () =>
-		     (copy{src=array0, si=0, dst=array0, di=0, len=SOME 0}; 
+		     (copy{src=array0, dst=array0, di=0}; 
 		      array0 <> array(0, w127)));
 
-val test11a = (copy{src=g, si= ~1, dst=g, di=0, len=NONE}; "WRONG") 
+val test11b = (copy{src=g, dst=g, di= ~1}; "WRONG") 
               handle Subscript => "OK" | _ => "WRONG"
-val test11b = (copy{src=g, si=0, dst=g, di= ~1, len=NONE}; "WRONG") 
+val test11d = (copy{src=g, dst=g, di=1}; "WRONG") 
               handle Subscript => "OK" | _ => "WRONG"
-val test11c = (copy{src=g, si=1, dst=g, di=0, len=NONE}; "OK") 
-              handle _ => "WRONG"
-val test11d = (copy{src=g, si=0, dst=g, di=1, len=NONE}; "WRONG") 
-              handle Subscript => "OK" | _ => "WRONG"
-val test11e = (copy{src=g, si=203, dst=g, di=0, len=NONE}; "OK") 
-              handle _ => "WRONG"
 
-val test11f = (copy{src=g, si= ~1, dst=g, di=0, len=SOME (length g)}; "WRONG") 
-              handle Subscript => "OK" | _ => "WRONG"
-val test11g = (copy{src=g, si=0, dst=g, di= ~1, len=SOME (length g)}; "WRONG") 
-              handle Subscript => "OK" | _ => "WRONG"
-val test11h = (copy{src=g, si=1, dst=g, di=0, len=SOME (length g)}; "WRONG") 
-              handle Subscript => "OK" | _ => "WRONG"
-val test11i = (copy{src=g, si=0, dst=g, di=1, len=SOME (length g)}; "WRONG") 
-              handle Subscript => "OK" | _ => "WRONG"
-val test11j = (copy{src=g, si=0, dst=g, di=0, len=SOME (length g+1)}; "WRONG") 
-              handle Subscript => "OK" | _ => "WRONG"
-val test11k = (copy{src=g, si=203, dst=g, di=0, len=SOME 1}; "WRONG") 
+val test11i = (copy{src=g, dst=g, di=1}; "WRONG") 
               handle Subscript => "OK" | _ => "WRONG"
 end;
