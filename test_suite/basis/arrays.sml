@@ -119,6 +119,8 @@ val _ = (copy{src=d, dst=e, di=0};
 	 copy{src=d, dst=e, di=length d + length b});
 
 fun a2v a = vector a
+fun l2v l = Vector.fromList l
+
 val ev = Vector.concat [a2v d, a2v b, a2v d]; (* length e = 203 *)
 
 val test7 = check'(fn () => length e = 203);
@@ -267,12 +269,17 @@ val test15a =
 local
     val a = array(length inp, inp sub 0);
 in
+val test_modify_1 = check'(fn _ => (copyinp a;
+				    modify (fn x => x) a;
+				    a2v a == a2v inp))
+
 val test_modifyi_1 = check'(fn _ => (modifyi (op +) array0;
-				     foldr (op::) [] array0 = []))
+				     a2v array0 = l2v []))
 
 val test_modifyi_2 = check'(fn _ => (copyinp a;
 				     modifyi (op -) a;
-				     foldr (op::) [] a = [~7,~8,~11]));
+				     a2v a = l2v [~7,~8,~11]));
+
 val test_modifyi_3 = check' (fn _ =>
 				(copyinp a;
 				 setv 117;
@@ -283,7 +290,12 @@ val test_modifyi_4 = check' (fn _ =>
 				(copyinp a;
 				 setv 100;
 				 modifyi (fn x => !v before setvi (!v, 1)) a;
-				 foldr (op::) [] a = [100, 101, 102]));
+				 a2v a = l2v [100, 101, 102]));
+
+val test_modifyi_5 = check'(fn _ => (copyinp a;
+				     modifyi (fn (_, x) => x) a;
+				     a2v a == a2v inp))
+
 
 end
 
