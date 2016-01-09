@@ -62,7 +62,12 @@ require "__pre_real";
 require "__real_vector";
 require "__real_vector_slice";
 
-structure RealArray : MONO_ARRAY where type elem = PreReal.real =
+structure RealArray :> MONO_ARRAY  (* OPTIONAL *)
+			   where type vector = RealVector.vector
+			   where type elem = real
+		 (* FIXME: floatarray is exposed for better printing.
+		    That may not be standard compatible. *)
+		 where type array = MLWorks.Internal.FloatArray.floatarray =
   struct
     type elem = PreReal.real
     type vector = RealVector.vector
@@ -210,5 +215,11 @@ structure RealArray : MONO_ARRAY where type elem = PreReal.real =
       in
 	iterate 0
       end
+
+    (* FIXME: This is written out manually because ArrayOps.modifyi is
+       miscompiled.  Remove this when compiler bug is fixed. *)
+    fun modifyi f array =
+      appi (fn (i, x) => update (array, i, f (i, x)))
+	   array
 
   end
