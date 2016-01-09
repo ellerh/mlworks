@@ -65,6 +65,7 @@ Result: OK
 local
   open General;
   open TextIO.StreamIO;
+  val extract = CharVectorSlice.vector o CharVectorSlice.slice
 in
 
 (* functions that supply reader input *)
@@ -79,7 +80,7 @@ in
               chunkSize = 20,
               writeVec = SOME (fn {buf=b,i=p,sz=s} => (
                                  comm_medium:=(!comm_medium)^
-                                                CharVector.extract(b,p,s);
+                                                extract(b,p,s);
                                  case s of
                                    NONE => CharVector.length b -p
                                  | SOME(si) => si)),
@@ -119,7 +120,7 @@ in
                  let val y = if x+(!pos)>CharVector.length(!comm_medium)
                                then CharVector.length(!comm_medium)-(!pos)
                              else x
-                     val r = CharVector.extract(!comm_medium,!pos,SOME y)
+                     val r = extract(!comm_medium,!pos,SOME y)
                  in
                    (pos:=(!pos)+y; r)
                  end),
@@ -135,7 +136,7 @@ in
               endPos = SOME(fn ()=> raise Fail "No end of file."),
               verifyPos = NONE,
               close = fn () => 
-                comm_medium:=CharVector.extract(!comm_medium,0,SOME (!pos)),
+                comm_medium:=extract(!comm_medium,0,SOME (!pos)),
               ioDesc = NONE};
 
 
