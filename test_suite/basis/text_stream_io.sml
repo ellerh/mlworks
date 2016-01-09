@@ -65,14 +65,19 @@ in
           end
 
   val inp = TextIO.getInstream(TextIO.openIn "123")
-             
-  val (data,inp') = TextIO.StreamIO.inputLine inp
+  local
+      fun oldInputLine inp =
+	case TextIO.StreamIO.inputLine inp of
+	    NONE => ("", inp)
+	  | SOME x => x
+  in
+  val (data,inp') = oldInputLine inp
   val test1 = reportOK(data="123\n")
-  val (data,inp'') = TextIO.StreamIO.inputLine inp'
-  val test2 = reportOK(data = "456\n")  
-  val (data,inp''') = TextIO.StreamIO.inputLine inp''
+  val (data,inp'') = oldInputLine inp'
+  val test2 = reportOK(data = "456\n")
+  val (data,inp''') = oldInputLine inp''
   val test3 = reportOK(data = "")
-   
+  end
   val _ = TextIO.StreamIO.closeIn inp
 
   val _ = OS.FileSys.remove "123" handle _ => () (*remove it*)
