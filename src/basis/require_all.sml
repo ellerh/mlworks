@@ -190,6 +190,7 @@ require "__word8_array";
 require "__word8_array_slice";
 require "__word8_array2";
 require "__real_vector";
+require "__real_vector_slice";
 require "__real_array";
 require "__real_array2";
 require "byte";
@@ -395,6 +396,7 @@ structure Word32Array=Word32Array
 structure Word32Array2=Word32Array2
 structure Word32Vector=Word32Vector
 structure RealVector=RealVector
+structure RealVectorSlice=RealVectorSlice
 structure RealArray=RealArray
 structure RealArray2=RealArray2
 structure SML90=SML90;
