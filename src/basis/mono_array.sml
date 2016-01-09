@@ -85,6 +85,7 @@ signature MONO_ARRAY =
     val sub         : (array * int) -> elem
     val update      : (array * int * elem) -> unit
 
+    val vector      : array -> vector
     val copy        : {src : array,  dst : array, di : int} -> unit
     val copyVec     : {src : vector, dst : array, di : int} -> unit
 
@@ -99,4 +100,9 @@ signature MONO_ARRAY =
     val modifyi : ((int * elem) -> elem) -> array -> unit
     val modify : (elem -> elem) -> array -> unit
 
+    val findi : (int * elem -> bool) -> array -> (int * elem) option
+    val find  : (elem -> bool) -> array -> elem option
+    val exists : (elem -> bool) -> array -> bool
+    val all : (elem -> bool) -> array -> bool
+    val collate : (elem * elem -> order) -> array * array -> order
   end
