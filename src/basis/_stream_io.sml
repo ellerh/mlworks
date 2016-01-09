@@ -135,23 +135,14 @@ exception TerminatedStream
 exception ClosedStream;
 *)
 
-(* FIXME: The standard doesn't have VectorSlice and ArraySlice
-   arguments.  Since those slices are only needed in two places, it
-   would good to get rid of these remainng two uses by implementing
-   the needed ops "manually".
- *)
 functor StreamIO (
     structure PrimIO : PRIM_IO
     structure Vector : MONO_VECTOR
-    structure VectorSlice : MONO_VECTOR_SLICE
     structure Array: MONO_ARRAY
-    structure ArraySlice : MONO_ARRAY_SLICE
     val someElem : PrimIO.elem
     sharing type PrimIO.vector = Array.vector = Vector.vector
-				 = VectorSlice.vector = ArraySlice.vector
-    sharing type PrimIO.array = Array.array = ArraySlice.array
-    sharing type Array.elem = PrimIO.elem = Vector.elem
-			      = VectorSlice.elem = ArraySlice.elem)
+    sharing type PrimIO.array = Array.array
+    sharing type Array.elem = PrimIO.elem = Vector.elem)
 	: STREAM_IO =
  struct
     structure PrimIO=PrimIO
@@ -256,7 +247,16 @@ functor StreamIO (
                         end handle e => handler(buffer,mlOp,e))
          end
 
-    val extract = VectorSlice.vector o VectorSlice.slice
+    fun extract (v : Vector.vector, start, len) =
+      let val l = Vector.length v
+	  val stop = case len of
+			 NONE => l
+		      |  SOME l => start + l
+      in
+	  if 0 <= start andalso start <= stop andalso stop <= l then
+	      Vector.tabulate (stop - start, fn i => Vector.sub (v, start + i))
+	  else raise Subscript
+      end
 
     fun generalizedInput (filbuf': buffer -> {eof: bool, rest: buffer}) 
 	              : instream -> vector * instream =
@@ -540,12 +540,16 @@ functor StreamIO (
 		       writer=ref(PUTmore(PrimIO.WR{writeArr=SOME write,...})),
                         ...}) =
        let val p = !pos
-	   fun copy (src, si, len, dst, di) =
-	     ArraySlice.copy {src = ArraySlice.slice (src, si, len),
-			      dst = dst, di = di}
+	   fun copy (src, start, stop, dst, di) =
+	     let fun loop si di =
+		   if si = stop then ()
+		   else (Array.update (dst, di, Array.sub (src, si));
+			 loop (si + 1) (di + 1))
+	     in loop start di end
+
 	   fun loop i = if i<p 
 	        then loop(i+write{buf=data,i=i,sz=SOME(p-i)}
-			  handle e => (copy (data, i, SOME (p-i), data, 0);
+			  handle e => (copy (data, i, p, data, 0);
 				       pos := p-i;
 				       raise e))
 		else ()
