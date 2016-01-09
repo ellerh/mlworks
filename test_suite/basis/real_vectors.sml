@@ -54,6 +54,7 @@ local
     infix 9 sub;
     infix eq
     val op eq = Real.==
+    val extract = RealVectorSlice.vector o RealVectorSlice.slice
 in
 
 infix ==
@@ -145,31 +146,6 @@ val test9i = check'(fn _ => fromList [] == extract(e, length e, SOME 0)
   val testAb = check'
          (fn _ => (map add1 (fromList [])) == (fromList [])) ;
   val testAc = check'
-         (fn _ => (mapi addi (v, 0, NONE)) == fromList [0.0,2.0,4.0,6.0,8.0,10.0,12.0,14.0]);
-  val testAd = check'
-         (fn _ => (mapi addi (v, 1, NONE)) == fromList [2.0,4.0,6.0,8.0,10.0,12.0,14.0]);
-  val testAe = check'
-         (fn _ => (mapi addi (v, 7, NONE)) == fromList [14.0]);
-  val testAf = 
-         (ignore(mapi addi (v, ~1, NONE)); "WRONG") handle Subscript => "OKEXN"
-                                                  | _ => "WRONG EXN" ;
-  val testAga = check'
-         (fn _ => (mapi addi (v, 8, NONE)) == fromList [])
-  val testAgb =
-         (ignore(mapi addi (v, 9, NONE)); "WRONG") handle Subscript => "OKEXN"
-                                                  | _ => "WRONG EXN" ;
-  val testAh =
-         check' (fn _ => mapi addi (v, 0, SOME 2) == fromList [0.0, 2.0]) ;
-  val testAi =
-         check' (fn _ => mapi addi (v, 6, SOME 2) == fromList [12.0,14.0]) ;
-  val testAj =
-         (ignore(mapi addi (v,7,SOME 2)); "WRONG") handle Subscript => "OKEXN"
-                                                 | _ => "WRONG EXN" ;
-  val testAk = check'
-         (fn _ => mapi addi (v, 2, SOME 0) == fromList [])
-  val testAl =
-         (ignore(mapi addi (v, 2, SOME ~1)); "WRONG") handle Subscript => "OKEXN"
-                                                 | _ => "WRONG EXN" ;
-
+         (fn _ => (mapi addi v) == fromList [0.0,2.0,4.0,6.0,8.0,10.0,12.0,14.0]);
 
 end;
