@@ -41,7 +41,9 @@
 structure P =
   PrimIO (
     structure V = CharVector
+    structure VectorSlice = CharVectorSlice
     structure A = CharArray
+    structure ArraySlice = CharArraySlice
     val someElem = #"p"
     type pos = Position.int
     val compare = Position.compare
