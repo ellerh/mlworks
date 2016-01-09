@@ -66,6 +66,7 @@ Result: OK
 local
   open General
   open TextIO
+  val extract = CharVectorSlice.vector o CharVectorSlice.slice
 in
 
 (* functions that supply reader input *)
@@ -80,7 +81,7 @@ in
               chunkSize = 20,
               writeVec = SOME (fn {buf=b,i=p,sz=s} => (
                                  comm_medium:=(!comm_medium)^
-                                                CharVector.extract(b,p,s);
+                                                extract(b,p,s);
                                  case s of
                                    NONE => CharVector.length b -p
                                  | SOME(si) => si)),
@@ -121,7 +122,7 @@ in
                  let val y = if x+(!pos)>CharVector.length(!comm_medium)
                                then CharVector.length(!comm_medium)-(!pos)
                              else x
-                     val r = CharVector.extract(!comm_medium,!pos,SOME y)
+                     val r = extract(!comm_medium,!pos,SOME y)
                  in
                    (pos:=(!pos)+y; r)
                  end),
@@ -188,7 +189,7 @@ in
     val _ = closeOut x;
 
     val y = openIn "123";
-    val s'_1 = inputLine y;
+    val s'_1 = Option.getOpt (inputLine y, "");
     val s'_2 = inputAll y;
     val _ = closeIn y;
 
@@ -218,7 +219,7 @@ in
                  let val y = if x+(!pos2)>CharVector.length(!comm_2)
                                then CharVector.length(!comm_2)-(!pos2)
                              else x
-                     val r = CharVector.extract(!comm_2,!pos2,SOME y)
+                     val r = extract(!comm_2,!pos2,SOME y)
                  in
                    (pos2:=(!pos2)+y; r)
                  end),
