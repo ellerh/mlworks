@@ -107,7 +107,9 @@ in
   val w = WR{ name = "Amy",
               chunkSize = 5,
               writeVec = SOME (fn {buf=b,i=p,sz=s} => (
-                                 result:=Word8Vector.extract(b,p,s);
+                                   result:= Word8VectorSlice.vector
+						(Word8VectorSlice.slice
+						     (b,p,s));
                                  case s of
                                    NONE => Word8Vector.length b -p
                                  | SOME(si) => si)),

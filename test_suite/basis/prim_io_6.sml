@@ -112,7 +112,8 @@ in
               writeArr = NONE,
 
               writeVecNB = SOME (fn {buf=b,i=p,sz=s} => SOME (
-                                 result:=Word8Vector.extract(b,p,s);
+				 result:=Word8VectorSlice.vector
+					    (Word8VectorSlice.slice (b,p,s));
                                  case s of
                                    NONE => Word8Vector.length b -p
                                  | SOME(si) => si)),
