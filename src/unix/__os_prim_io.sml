@@ -161,9 +161,7 @@
  *)
 
 require "^.basis.__word8_vector";
-require "^.basis.__char_array";
 require "^.basis.__char_array_slice";
-require "^.basis.__char_vector";
 require "^.basis.__char_vector_slice";
 require "^.basis.os_prim_io";
 require "^.basis.__bin_prim_io";
