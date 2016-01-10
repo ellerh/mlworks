@@ -68,11 +68,11 @@ functor Slice (Sequence : sig
 		 SLICE {seq = seq, start = start + 1, stop = stop})
 
     fun appi (f : int * 'a S.elt -> unit) (SLICE {seq, start, stop}) =
-      let fun loop i =
+      let fun loop i j =
 	    if i = stop then ()
-	    else (f (i - start, (S.unsafeSub (seq, i)));
-		  loop (i + 1))
-      in loop start end
+	    else (f (j, (S.unsafeSub (seq, i)));
+		  loop (i + 1) (j + 1))
+      in loop start 0 end
 
     fun app (f : 'a S.elt -> unit) (SLICE {seq, start, stop}) =
       let fun loop i =
@@ -82,11 +82,12 @@ functor Slice (Sequence : sig
       in loop start end
 
     fun foldli f init (SLICE {seq, start, stop}) =
-      let fun loop i state =
+      let fun loop i j state =
 	    if i = stop then state
 	    else loop (i + 1)
-		      (f (i - start, S.unsafeSub (seq, i), state))
-      in loop start init end
+		      (j + 1)
+		      (f (j, S.unsafeSub (seq, i), state))
+      in loop start 0 init end
 
     fun foldl f init (SLICE {seq, start, stop}) =
       let fun loop i state =
@@ -95,11 +96,12 @@ functor Slice (Sequence : sig
       in loop start init end
 
     fun foldri f init (SLICE {seq, start, stop}) =
-      let fun loop i state =
+      let fun loop i j state =
 	    if i < start then state
 	    else loop (i - 1)
-		      (f (i - start, S.unsafeSub (seq, i), state))
-      in loop (stop - 1) init end
+		      (j - 1)
+		      (f (j, S.unsafeSub (seq, i), state))
+      in loop (stop - 1) (stop - start - 1) init end
 
     fun foldr f init (SLICE {seq, start, stop}) =
       let fun loop i state =
@@ -108,14 +110,14 @@ functor Slice (Sequence : sig
       in loop (stop - 1) init end
 
     fun findi f (SLICE {seq, start, stop}) =
-      let fun loop i =
+      let fun loop i j =
 	    if i = stop then NONE
 	    else let val x = S.unsafeSub (seq, i)
 		 in
-		     if f (i, x) then SOME (i, x)
-		     else loop (i + 1)
+		     if f (j, x) then SOME (j, x)
+		     else loop (i + 1) (j + 1)
 		 end
-      in loop 0 end
+      in loop start 0 end
 
     fun find f (SLICE {seq, start, stop}) =
       let fun loop i =
@@ -125,17 +127,19 @@ functor Slice (Sequence : sig
 		     if f x then SOME x
 		     else loop (i + 1)
 		 end
-      in loop 0 end
+      in loop start end
 
     fun exists f (SLICE {seq, start, stop}) =
       let fun loop i =
-	    i < stop andalso f (S.unsafeSub (seq, i)) orelse loop (i + 1)
-      in loop 0 end
+	    if i = stop then false
+	    else f (S.unsafeSub (seq, i)) orelse loop (i + 1)
+      in loop start end
 
     fun all f (SLICE {seq, start, stop}) =
       let fun loop i =
-	    i = stop orelse f (S.unsafeSub (seq, i)) andalso loop (i + 1)
-      in loop 0 end
+	    if i = stop then true
+	    else f (S.unsafeSub (seq, i)) andalso loop (i + 1)
+      in loop start end
 
     fun collate f (SLICE {seq = v1, start = s1, stop = e1},
 		   SLICE {seq = v2, start = s2, stop = e2}) =
@@ -148,5 +152,5 @@ functor Slice (Sequence : sig
 		   | x => x
       in loop s1 s2 end
 
-  end
+    end
   end
