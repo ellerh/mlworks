@@ -240,7 +240,6 @@
 #include <sys/ioctl.h>		/* FIONREAD */
 #include <pwd.h>		/* struct passwd */
 #include <utime.h>		/* utime, utimbuf */
-#include <i386-linux-gnu/sys/stat.h> /* lstat */
 
 #include "syscalls.h"
 #ifndef MLW_OVERRIDE_RUSAGE
