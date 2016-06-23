@@ -102,7 +102,8 @@ let
                          (Shell.Project.showFiles()))
 in
   setTargets ["__io.sml", "__bin_prim_io.sml", "__os_prim_io.sml", "__text_io.sml", "__bin_io.sml",
-              "__text_stream_io.sml", "__bin_stream_io.sml", "__text_prim_io.sml", "__word8_vector.sml"];
+              "__text_stream_io.sml", "__bin_stream_io.sml", "__text_prim_io.sml", "__word8_vector.sml",
+              "__word8_vector_slice.sml" ];
   Shell.Project.forceCompileAll();
   Shell.Project.loadAll()
 end;
@@ -110,6 +111,7 @@ end;
 local
   val pos = ref 0;
   val comm_medium = ref (Word8Vector.fromList [])
+  val extract = Word8VectorSlice.vector o Word8VectorSlice.slice
 in
 
 (* functions that supply reader input *)
@@ -119,7 +121,7 @@ in
   val w = BinPrimIO.WR{ name = "Amy",
               chunkSize = 5,
               writeVec = SOME (fn {buf=b,i=p,sz=s} => (
-                                 comm_medium:=Word8Vector.extract(b,p,s);
+                                 comm_medium:=extract(b,p,s);
                                  case s of
                                    NONE => Word8Vector.length b -p
                                  | SOME(si) => si)),
@@ -144,7 +146,7 @@ in
                  let val y = if x+(!pos)>Word8Vector.length(!comm_medium)
                                then Word8Vector.length(!comm_medium)-(!pos)
                              else x
-                     val r = Word8Vector.extract(!comm_medium,!pos,SOME y)
+                     val r = extract(!comm_medium,!pos,SOME y)
                  in
                    (pos:=(!pos)+y; r)
                  end),
